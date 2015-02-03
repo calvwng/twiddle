@@ -3,7 +3,7 @@ CPE 409 Twiddle App
 
 # Vision And Scope:
 
-Twiddle is an Android mobile application that enables users to discover fun and entertaining nearby activities. Upon entering the app, the user's GPS location will be detected and he/she will be presented a list of nearby activities that have been crowdsource by the nearby community. Additionally, the user will also be able to contribute to the community by submitting their ideas in mind. Our target audience includes anyone who is looking for something to do. Our application will not be a review tool but more for discovery and exploring new opportunities.
+Twiddle is an Android mobile application that enables users to discover entertaining local activities curated by the local communities themselves. Upon launching the app, the user's GPS location will be detected and he/she will be presented a list of nearby activities that have been crowdsourced by that area's local community. The user will be able to browse this list to view, like, and favorite notable activities. Additionally, the user will be able to post new activities to contribute to the local activity listing. Our target audience includes anyone who seeks adventure or entertainment, especially tourists and visitors from out of town. Our application will not be a review tool but more of an opportunity discovery and exploration tool.
 
 
 # Team:
