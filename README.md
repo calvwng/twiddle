@@ -24,15 +24,15 @@ Michael Wong (Team Member)
 # REST API
 We will be using the following APIs:
 
-Parse:
+<b>Parse:</b>
 
 Parse is a great platform to use for back-end mobile applications. Because Parse has a native Android SDK library, we eliminate the need to create a Rest API by simplying making SDK calls to the Parse server. Parse also handles push notifications for you, eliminating the need to setup GCM on a in-house back-end API. We are planning to use Parse to store most of the data such as user credentials, each actvitiy submitted, starred activities, etc. 
 
-Google Maps:
+<b>Google Maps:</b>
 
 Google Maps API will be used to display the location of where each activity is happening. 
 
-Amazon S3:
+<b>Amazon S3:</b>
 
-Amazon S3 will be used to store any photos/media for each activity submitted. Parse will capture the URL for the photo and link it to each activity accordingly. The reason we are not using Parse to store photos is because Parse only offers 20 GB of free storage. Since photos and videos take up a lot of space, it is quiet easy to consume the allotted amount. Additionally, since Parse is built off Amazon AWS, it is cheaper to simply go directly to Amazon for more storage if we do not need the PaaS capabilities. 
+We are considering using Amazon S3 to store any photos/media for each activity submitted. Parse will capture the URL for the photo and link it to each activity accordingly. Reasons we are considering using Amazon S3 is because it will be a great learning experience to learn how to use another platform and additionally if we need to scale off Parse, our media will already be on Amazon AWS.
 
