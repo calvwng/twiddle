@@ -18,8 +18,8 @@ Michael Wong (Team Member)
 
 # Low-Fidelity Prototype
 ![](https://cpslo-csc.mybalsamiq.com/projects/treecounting/Twiddle-Browse.png?key=ac26bbbdb6ed099bbfc48ff75806c48735f53bd9)
-![](https://cpslo-csc.mybalsamiq.com/mockups/2717168.png?key=ac26bbbdb6ed099bbfc48ff75806c48735f53bd9)
 ![](https://cpslo-csc.mybalsamiq.com/projects/treecounting/Activity-Page.png?key=ac26bbbdb6ed099bbfc48ff75806c48735f53bd9)
+![](https://cpslo-csc.mybalsamiq.com/mockups/2717168.png?key=ac26bbbdb6ed099bbfc48ff75806c48735f53bd9)
 
 # REST API
 We will be using the following APIs:
