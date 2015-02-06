@@ -4,37 +4,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                tools:context=".LogInActivity" >
+                tools:context=".LogInActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/login_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"/>
 
     <com.facebook.widget.LoginButton
-        xmlns:fb="http://schemas.android.com/apk/res-auto"
         android:id="@+id/login"
+        xmlns:fb="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
         android:layout_marginBottom="40dp"
+        android:layout_marginTop="25dp"
         android:text="    Log in with Facebook    "
-        fb:login_text="     Log in with Facebook    " />
+        fb:login_text="     Log in with Facebook    "/>
 
     <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/login_indicator"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dip"
+        android:layout_above="@id/login"
         android:layout_marginLeft="75dip"
         android:layout_marginRight="75dip"
-        app:radius="4.5dp"
+        android:padding="10dip"
         app:fillColor="@color/primary"
+        app:radius="4.5dp"
         app:strokeColor="@color/primary"
-        app:strokeWidth="1.5dp"
-        android:layout_above="@id/login" />
+        app:strokeWidth="1.5dp"/>
 
 </RelativeLayout>
