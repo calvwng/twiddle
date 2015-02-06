@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="1_Parse-1.8.2">
+  <library name="bolts-android-1.1.4">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/Parse-1.8.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/app/libs/bolts-android-1.1.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
