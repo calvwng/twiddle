@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/viewpager_item"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="0dp" >
+ 
+    <ImageView
+        android:id="@+id/page_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.80"
+        android:scaleType="centerCrop"
+        android:background="@android:color/white" />
+    
+   	<LinearLayout
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="fill_parent"
+   	    android:orientation="horizontal" >
+   	    
+   	   	<View
+   	   	    android:layout_width="0dp"
+   	   	    android:layout_height="0dp"
+   	   	    android:layout_weight="0.15" />
+   	   	
+   	   	<LinearLayout
+   	   	    android:layout_width="0dp"
+   	   	    android:layout_height="match_parent"
+   	   	    android:layout_weight="0.7"
+   	   	    android:orientation="vertical" >   
+   
+		    <RelativeLayout
+		         android:id="@+id/yourVoteCircle"
+		         android:layout_width="match_parent"
+		         android:layout_height="0dp"
+		         android:layout_weight="0.70"
+		         android:layout_alignParentTop="true"
+		         android:layout_centerHorizontal="true" >
+		         
+		         <ImageView
+		             android:layout_width="wrap_content"
+		             android:contentDescription="Black opaque circle background"
+		             android:alpha="0.3"
+		             android:layout_height="wrap_content"
+		             android:layout_centerHorizontal="true"
+		             android:layout_alignParentTop="true"
+		             android:layout_alignParentBottom="true" />
+		         
+		         <RelativeLayout
+		            android:layout_centerInParent="true"
+		            android:layout_width="match_parent"
+		            android:layout_height="match_parent"
+		            android:gravity="center_vertical" >
+		            
+			          <TextView
+			              android:id="@+id/information_title"
+			              android:layout_width="wrap_content"
+			              android:layout_height="wrap_content"
+			              android:layout_centerInParent="true"
+			              android:gravity="center"
+			              android:paddingLeft="10dp"
+			              android:paddingRight="10dp"
+			              android:fontFamily="sans-serif"
+			              android:text="Titles goes here"
+			              android:textStyle="italic"
+			              android:textColor="@android:color/white"
+			              android:textSize="22dp" />
+			          
+    		          <ImageView
+		                 android:id="@+id/page_icon"
+		                 android:layout_width="40dp"
+		                 android:layout_height="40dp"
+		                 android:layout_marginBottom="10dp"
+		                 android:layout_centerHorizontal="true"
+		                 android:layout_above="@id/information_title"/>
+		                 <!--android:src="@drawable/yes_vote"-->
+
+			          		             
+			          <TextView
+			              android:id="@+id/page_information"
+			              android:layout_width="wrap_content"
+			              android:layout_height="wrap_content"
+			              android:gravity="center"
+			              android:layout_centerHorizontal="true"
+			              android:layout_below="@id/information_title"
+			              android:paddingLeft="15dp"
+			              android:paddingRight="15dp"
+			              android:layout_marginTop="-3dp"
+			              android:layout_marginBottom="5dp"
+			              android:fontFamily="sans-serif-thin"
+			              android:text="Description of the page goes here"
+			              android:textColor="@android:color/white"
+			              android:textSize="17dp" />
+		
+				                      
+		       </RelativeLayout>
+		       
+		    </RelativeLayout>
+		    
+      	   	    <View
+   	   	        android:layout_width="match_parent"
+   	   	        android:layout_height="0dp"
+   	   	        android:layout_weight="0.30" />
+	    
+	    </LinearLayout>
+	    
+	    <View
+   	   	    android:layout_width="0dp"
+   	   	    android:layout_height="0dp"
+   	   	    android:layout_weight="0.15" />
+	    
+	</LinearLayout>
+	    
+ </RelativeLayout>
