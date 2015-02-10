@@ -24,14 +24,8 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseInstallation;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.viewpagerindicator.CirclePageIndicator;
-
+import com.parse.*;
 import java.util.Arrays;
 
 public class LoginActivity extends ActionBarActivity {
@@ -67,6 +61,7 @@ public class LoginActivity extends ActionBarActivity {
     ParseUser user = ParseUser.getCurrentUser();
     return user != null && ParseFacebookUtils.isLinked(user);
   }
+
 
   private void startMainActivity() {
     startActivity(new Intent(LoginActivity.this, MainActivity.class));
