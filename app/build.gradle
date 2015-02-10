@@ -6,11 +6,8 @@ repositories {
 
 android {
     signingConfigs {
-        custom_debug_keystore {
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-            storeFile file('debugkey/debug.keystore')
-            storePassword 'android'
+        debug {
+            storeFile file('debug.keystore')
         }
     }
     compileSdkVersion 21
