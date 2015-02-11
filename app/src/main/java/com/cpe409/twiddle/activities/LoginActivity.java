@@ -1,31 +1,31 @@
 package com.cpe409.twiddle.activities;
 
-import com.cpe409.twiddle.R;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
+import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.adapters.LoginPagerAdapter;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.viewpagerindicator.CirclePageIndicator;
-import com.parse.*;
+
 import java.util.Arrays;
 
 public class LoginActivity extends ActionBarActivity {
