@@ -1,7 +1,5 @@
 package com.cpe409.twiddle.adapters;
 
-import com.cpe409.twiddle.R;
-
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,19 +10,22 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cpe409.twiddle.R;
+
 public class LoginPagerAdapter extends PagerAdapter {
   private Context context_;
 
   private static String[] viewpageTexts = {
-      "Easily organize events on the go and keep everyone in the loop",
-      "Watch your friends cast their votes in real time with real-time updates",
-      "Vote amongst the group to filter and find the best activity for everyone" };
-  private static String[] viewpageTitles = { "Plan events effortlessly", "Keep it real",
-      "Everybody has a say" };
-  private static int[] viewpageIcons = new int[] { R.drawable.ic_launcher ,R.drawable.ic_launcher,
-      R.drawable.ic_launcher };
-  private static int[] viewpageBackgrounds = new int[] { android.R.color.white,
-      android.R.color.white, android.R.color.white };
+      "Easily discover new adventures on the go",
+      "Share your adventures with the world",
+      "Experience your adventures with friends & family"};
+  private static String[] viewpageTitles = {"Explore.",
+                                            "Share.",
+                                            "Adventure."};
+  private static int[] viewpageIcons = new int[]{R.drawable.ic_launcher, R.drawable.ic_launcher,
+      R.drawable.ic_launcher};
+  private static int[] viewpageBackgrounds = new int[]{R.drawable.bubbleball,
+      R.drawable.beach, R.drawable.adventure};
 
   public LoginPagerAdapter(Context context) {
     this.context_ = context;
@@ -64,7 +65,6 @@ public class LoginPagerAdapter extends PagerAdapter {
   public void destroyItem(ViewGroup container, int position, Object object) {
     // Remove viewpager_item.xml from ViewPager
     ((ViewPager) container).removeView((RelativeLayout) object);
-
   }
 
 }
