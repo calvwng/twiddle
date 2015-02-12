@@ -1,6 +1,8 @@
 package com.cpe409.twiddle.activities;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -15,7 +17,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.io.Serializable;
+import java.io.IOException;
 
 
 public class LocationActivity extends ActionBarActivity implements OnMapReadyCallback {
@@ -63,12 +65,26 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
 
     private void sendLocation() {
         LatLng latLng = this.googleMap.getCameraPosition().target;
-        Location location = new Location(latLng);
+        Location location = new Location(latLng, getAddress(latLng));
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra(EXTRA_LOCATION, location);
 
         setResult(RESULT_OK, resultIntent);
         finish();
+    }
+
+    private Address getAddress(LatLng latLng) {
+        Geocoder geocoder = new Geocoder(this);
+
+        Address address = null;
+
+        try {
+            address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return address;
     }
 }

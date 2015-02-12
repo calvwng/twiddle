@@ -9,7 +9,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title"
+        android:hint="@string/create_fragment_edittext_title"
         android:id="@+id/editTextTitle" />
 
     <EditText
@@ -20,7 +20,7 @@
         android:inputType="textMultiLine"
         android:lines="5"
         android:gravity="top"
-        android:hint="Description"
+        android:hint="@string/create_fragment_edittext_description"
         android:id="@+id/editTextDescription" />
 
     <TextView
@@ -29,7 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextDescription"
         android:layout_marginTop="40dp"
-        android:hint="Location"
+        android:focusable="false"
+        android:hint="@string/create_fragment_txtview_location"
         android:drawableEnd="@drawable/ic_action_place"
         android:drawableRight="@drawable/ic_action_place"
         android:id="@+id/textViewAddLocation" />
@@ -40,7 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewAddLocation"
         android:layout_marginTop="20dp"
-        android:hint="Add an image"
+        android:focusable="false"
+        android:hint="@string/create_fragment_txtview_imge"
         android:drawableRight="@drawable/ic_action_picture"
         android:drawableEnd="@drawable/ic_action_picture"
         android:id="@+id/textViewAddImage" />
