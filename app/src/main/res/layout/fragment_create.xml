@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="30dp"
+    android:paddingEnd="20dp"
+    android:paddingStart="20dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/create_fragment_edittext_title"
+        android:id="@+id/editTextTitle" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextTitle"
+        android:layout_marginTop="20dp"
+        android:inputType="textMultiLine"
+        android:lines="5"
+        android:gravity="top"
+        android:hint="@string/create_fragment_edittext_description"
+        android:id="@+id/editTextDescription" />
+
+    <TextView
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextDescription"
+        android:layout_marginTop="40dp"
+        android:focusable="false"
+        android:hint="@string/create_fragment_txtview_location"
+        android:drawableEnd="@drawable/ic_action_place"
+        android:drawableRight="@drawable/ic_action_place"
+        android:id="@+id/textViewAddLocation" />
+
+    <TextView
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewAddLocation"
+        android:layout_marginTop="20dp"
+        android:focusable="false"
+        android:hint="@string/create_fragment_txtview_imge"
+        android:drawableRight="@drawable/ic_action_picture"
+        android:drawableEnd="@drawable/ic_action_picture"
+        android:id="@+id/textViewAddImage" />
+
+</RelativeLayout>
