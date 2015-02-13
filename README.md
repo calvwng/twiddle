@@ -36,3 +36,9 @@ Google Maps API will be used to display the location of where each activity is h
 
 We are considering using Amazon S3 to store any photos/media for each activity submitted. Parse will capture the URL for the photo and link it to each activity accordingly. Reasons we are considering using Amazon S3 is because it will be a great learning experience to learn how to use another platform and additionally if we need to scale off Parse, our media will already be on Amazon AWS.
 
+# Initial UML Class Diagram
+![](https://40.media.tumblr.com/f8330d858d6cb3fc061395fd164f7c1d/tumblr_njp715jAwt1u7eu2po1_500.png)
+
+# Initial Use Case Diagram
+![](https://36.media.tumblr.com/219aa792792cf47d220b0d79892bea72/tumblr_njp715jAwt1u7eu2po2_540.png)
+
