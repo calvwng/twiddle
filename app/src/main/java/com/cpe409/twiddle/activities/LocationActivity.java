@@ -1,10 +1,14 @@
 package com.cpe409.twiddle.activities;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -39,6 +43,12 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_location, menu);
 
+        SearchManager searchManager = (SearchManager) this.getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+        searchView.setSearchableInfo(searchableInfo);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -50,6 +60,16 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
+            String locationAddress = intent.getStringExtra(SearchManager.QUERY);
+            LatLng latLng = this.getCoordinateFromAddress(locationAddress);
+
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         }
     }
 
@@ -76,7 +96,6 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
 
     private Address getAddress(LatLng latLng) {
         Geocoder geocoder = new Geocoder(this);
-
         Address address = null;
 
         try {
@@ -86,5 +105,20 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
         }
 
         return address;
+    }
+
+    private LatLng getCoordinateFromAddress(String locationAddress) {
+        Geocoder geocoder = new Geocoder(this);
+        LatLng latLng = null;
+
+        try {
+            Address address = geocoder.getFromLocationName(locationAddress, 1).get(0);
+            latLng = new LatLng(address.getLatitude(), address.getLongitude());
+        } catch (IOException e) {
+            latLng = new LatLng(0, 0);
+            e.printStackTrace();
+        }
+
+        return latLng;
     }
 }

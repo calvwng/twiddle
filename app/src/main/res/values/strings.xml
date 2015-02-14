@@ -15,4 +15,5 @@
     <string name="create_fragment_edittext_description">Description</string>
     <string name="create_fragment_txtview_location">Location</string>
     <string name="create_fragment_txtview_imge">Add an image</string>
+    <string name="map_search_hint">Search for places</string>
 </resources>
