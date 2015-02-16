@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.model.Location;
@@ -67,9 +68,14 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
     protected void onNewIntent(Intent intent) {
         if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
             String locationAddress = intent.getStringExtra(SearchManager.QUERY);
-            LatLng latLng = this.getCoordinateFromAddress(locationAddress);
 
-            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            try {
+                LatLng latLng = this.getCoordinateFromAddress(locationAddress);
+                this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            } catch (IOException | IndexOutOfBoundsException e) {
+                Toast.makeText(this, "Location not found", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
         }
     }
 
@@ -107,17 +113,10 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
         return address;
     }
 
-    private LatLng getCoordinateFromAddress(String locationAddress) {
+    private LatLng getCoordinateFromAddress(String locationAddress) throws IOException {
         Geocoder geocoder = new Geocoder(this);
-        LatLng latLng = null;
-
-        try {
-            Address address = geocoder.getFromLocationName(locationAddress, 1).get(0);
-            latLng = new LatLng(address.getLatitude(), address.getLongitude());
-        } catch (IOException e) {
-            latLng = new LatLng(0, 0);
-            e.printStackTrace();
-        }
+        Address address = geocoder.getFromLocationName(locationAddress, 1).get(0);
+        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
 
         return latLng;
     }
