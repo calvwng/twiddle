@@ -8,12 +8,12 @@ import com.cpe409.twiddle.R;
 
 public class CreateActivity extends ActionBarActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.container, new CreateFragment()).commit();
-    }
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    transaction.add(R.id.container, new CreateFragment()).commit();
+  }
 }
