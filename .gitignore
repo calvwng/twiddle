@@ -1,6 +1,3 @@
-# IntelliJ Project Files
-*.iml
-
 #built application files
 *.apk
 *.ap_
