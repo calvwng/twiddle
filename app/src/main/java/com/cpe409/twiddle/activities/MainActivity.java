@@ -11,20 +11,37 @@ import android.view.ViewGroup;
 
 import com.cpe409.twiddle.R;
 import com.facebook.AppEventsLogger;
+import android.content.Intent;
+import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
+import it.neokree.materialnavigationdrawer.elements.MaterialSection;
+import it.neokree.materialnavigationdrawer.util.MaterialDrawerLayout;
 
-
-public class MainActivity extends ActionBarActivity {
+/**
+ * The wiki for MaterialNavigationDrawer is https://github.com/neokree/MaterialNavigationDrawer/wiki
+ */
+public class MainActivity extends MaterialNavigationDrawer {
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    AppEventsLogger.activateApp(this);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .add(R.id.container, new PlaceholderFragment())
-          .commit();
-    }
+  public void init(Bundle savedInstanceState) {
+    initNavDrawer();
+  }
+
+  /**
+   * Sets up the MaterialNavigationDrawer
+   */
+  public void initNavDrawer() {
+    this.disableLearningPattern(); // Hides drawer on start
+
+    this.setUsername("Test User");
+
+    MaterialSection browseSection = this.newSection("Browse Adventures", new Fragment()); // TODO: set drawable & fragment
+    MaterialSection favoritesSection = this.newSection("Favorites", new Fragment()); // TODO: set drawable & fragment
+    MaterialSection settingsSection = this.newSection("Settings", new Fragment()); // TODO: set drawable & fragment
+    MaterialSection logoutSection = this.newSection("Logout", new Fragment()); // TODO: set drawable & fragment
+    this.addSection(browseSection);
+    this.addSection(favoritesSection);
+    this.addSection(settingsSection);
+    this.addSection(logoutSection);
   }
 
   @Override
