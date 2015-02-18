@@ -1,8 +1,11 @@
 package com.cpe409.twiddle.activities;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,16 +14,38 @@ import android.view.ViewGroup;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.fragments.FeedFragment;
+import com.cpe409.twiddle.model.CurrentUser;
 import com.facebook.AppEventsLogger;
-import android.content.Intent;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
+import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
 import it.neokree.materialnavigationdrawer.elements.MaterialSection;
-import it.neokree.materialnavigationdrawer.util.MaterialDrawerLayout;
 
 /**
  * The wiki for MaterialNavigationDrawer is https://github.com/neokree/MaterialNavigationDrawer/wiki
  */
 public class MainActivity extends MaterialNavigationDrawer {
+
+  private MaterialAccount account;
+  private Target userPhoto = new Target() {
+    @Override
+    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+      account.setPhoto(bitmap);
+      notifyAccountDataChanged();
+    }
+
+    @Override
+    public void onBitmapFailed(Drawable errorDrawable) {
+
+    }
+
+    @Override
+    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+    }
+  };
 
   @Override
   public void init(Bundle savedInstanceState) {
@@ -32,8 +57,11 @@ public class MainActivity extends MaterialNavigationDrawer {
    */
   public void initNavDrawer() {
     this.disableLearningPattern(); // Hides drawer on start
-
     this.setUsername("Test User");
+
+    account = new MaterialAccount(this.getResources(), "",
+        CurrentUser.getInstance().getName(),
+        R.drawable.ic_action_account_circle, R.drawable.bg_nav_drawer);
 
     MaterialSection browseSection = this.newSection("Adventures", FeedFragment.newInstance()); // TODO: set drawable & fragment
     MaterialSection favoritesSection = this.newSection("Favorites", new Fragment()); // TODO: set drawable & fragment
@@ -43,6 +71,15 @@ public class MainActivity extends MaterialNavigationDrawer {
     this.addSection(favoritesSection);
     this.addSection(settingsSection);
     this.addSection(logoutSection);
+    this.addAccount(account);
+
+    Picasso.with(this).load(CurrentUser.getInstance().getImageURL()).into(userPhoto);
+  }
+
+  @Override
+  protected void onDestroy() {
+    Picasso.with(this).cancelRequest(userPhoto);
+    super.onDestroy();
   }
 
   @Override

@@ -13,11 +13,13 @@ public class FacebookUser {
   private final static String FB_GRAPH_URL = "http://graph.facebook.com/";
   private final static String FB_PICTURE_URL = "/picture?type=large";
 
-   public static FacebookUser ParseToFacebookUser(ParseObject user) {
-    FacebookUser fbUser = new FacebookUser();
-    fbUser.userId = user.getString("fbId");
-    fbUser.name = user.getString("fbName");
-    return fbUser;
+  public static FacebookUser ParseToFacebookUser(ParseObject user) {
+    return new FacebookUser(user);
+  }
+
+  public FacebookUser(ParseObject user) {
+    this.userId = user.getString("fbId");
+    this.name = user.getString("fbName");
   }
 
   public String getUserId() {
