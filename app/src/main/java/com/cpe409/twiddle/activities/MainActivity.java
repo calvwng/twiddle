@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.fragments.FeedFragment;
 import com.facebook.AppEventsLogger;
 import android.content.Intent;
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
@@ -34,7 +35,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     this.setUsername("Test User");
 
-    MaterialSection browseSection = this.newSection("Browse Adventures", new Fragment()); // TODO: set drawable & fragment
+    MaterialSection browseSection = this.newSection("Adventures", FeedFragment.newInstance()); // TODO: set drawable & fragment
     MaterialSection favoritesSection = this.newSection("Favorites", new Fragment()); // TODO: set drawable & fragment
     MaterialSection settingsSection = this.newSection("Settings", new Fragment()); // TODO: set drawable & fragment
     MaterialSection logoutSection = this.newSection("Logout", new Fragment()); // TODO: set drawable & fragment
