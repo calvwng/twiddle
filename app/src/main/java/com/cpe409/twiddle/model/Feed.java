@@ -56,4 +56,8 @@ public class Feed {
   public int getLikesCount() {
     return likesCount;
   }
+
+  public int offsetLikesCount(int offset) {
+    return likesCount += offset;
+  }
 }
