@@ -103,9 +103,7 @@ public class FeedListAdapter extends BaseAdapter {
           feed.setLiked(true);
           holder.likesCount.setText(feed.getLikesCount() + " likes");
           holder.likeButton.setImageResource(R.drawable.ic_heart_small_blue);
-        }
-
-        // Unlike the feed
+        } // Unlike the feed
         else {
           unlikeFeed(feed);
           feed.setLikesCount(feed.getLikesCount() - 1);
@@ -113,7 +111,6 @@ public class FeedListAdapter extends BaseAdapter {
           holder.likesCount.setCurrentText(feed.getLikesCount() + " likes");
           holder.likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
         }
-        feed.setLiked(feed.getIsLiked() ? false : true);
       }
     });
 
