@@ -26,7 +26,6 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_action_place"
                 android:scaleType="center"/>
 
             <TextView

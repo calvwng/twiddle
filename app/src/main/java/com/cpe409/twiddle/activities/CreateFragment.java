@@ -19,6 +19,7 @@ import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.model.Location;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class CreateFragment extends Fragment {
@@ -101,7 +102,7 @@ public class CreateFragment extends Fragment {
     String description = this.editTextDescription_.getText().toString();
     Location location = (Location) this.textViewLocation.getTag();
 
-    if (!title.isEmpty() && location != null) {
+    if (!title.isEmpty() && location != null && ParseUser.getCurrentUser() != null) {
       saveObject(title, description, location);
     } else {
       Toast.makeText(getActivity(), "Don't left anything blank!", Toast.LENGTH_SHORT).show();
@@ -109,21 +110,23 @@ public class CreateFragment extends Fragment {
   }
 
   private void saveObject(String title, String description, Location location) {
-    ParseObject activityObject = new ParseObject("Adventure");
+    ParseObject adventureObject = new ParseObject("Adventure");
     ParseObject locationObject = new ParseObject("Location");
 
     locationObject.put("locationLatitude", location.latitude);
     locationObject.put("locationLongitude", location.longitude);
     locationObject.put("locationAddress", location.strAddress);
 
-    activityObject.put("adventureTitle", title);
-    activityObject.put("adventureDescription", description);
-    activityObject.put("adventureLocation", locationObject);
+    adventureObject.put("adventureTitle", title);
+    adventureObject.put("adventureDescription", description);
+    adventureObject.put("adventureLocation", locationObject);
+    adventureObject.put("author", ParseUser.getCurrentUser());
+
 
     final ProgressDialog pDialog_;
     pDialog_ = ProgressDialog.show(getActivity(), "", "Creating Adventure...", true);
 
-    activityObject.saveInBackground(new SaveCallback() {
+    adventureObject.saveInBackground(new SaveCallback() {
       @Override
       public void done(ParseException e) {
         pDialog_.dismiss();
