@@ -1,16 +1,10 @@
 package com.cpe409.twiddle.adapters;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
@@ -37,7 +31,7 @@ public class FeedListAdapter extends BaseAdapter {
 
   private Context context;
   private List<Feed> feedList;
-
+  private final String TAG = FeedListAdapter.class.getSimpleName();
   public FeedListAdapter(Context context, List<Feed> feedList) {
     this.context = context;
     this.feedList = feedList;
@@ -92,9 +86,38 @@ public class FeedListAdapter extends BaseAdapter {
       Picasso.with(context).load(imgUrl).into(holder.feedPicture);
     }
 
-    holder.likeButton.setOnClickListener(new LikeButtonOnClickListener(position));
-    holder.likesCount.setText(feed.getLikesCount() + " likes");
+    holder.likeButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (!CurrentUser.getInstance().isLoggedIn()) {
+          Toast.makeText(context, "Please log in before liking.", Toast.LENGTH_SHORT).show();
+          return;
+        }
 
+        Feed feed = holder.feed;
+
+        // Like the feed
+        if (!feed.getIsLiked()) {
+          likeFeed(feed);
+          feed.setLikesCount(feed.getLikesCount() + 1);
+          feed.setLiked(true);
+          holder.likesCount.setText(feed.getLikesCount() + " likes");
+          holder.likeButton.setImageResource(R.drawable.ic_heart_small_blue);
+        }
+
+        // Unlike the feed
+        else {
+          unlikeFeed(feed);
+          feed.setLikesCount(feed.getLikesCount() - 1);
+          feed.setLiked(false);
+          holder.likesCount.setCurrentText(feed.getLikesCount() + " likes");
+          holder.likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
+        }
+        feed.setLiked(feed.getIsLiked() ? false : true);
+      }
+    });
+
+    holder.likesCount.setCurrentText(feed.getLikesCount() + " likes");
     return view;
   }
 
@@ -113,55 +136,25 @@ public class FeedListAdapter extends BaseAdapter {
     TextSwitcher likesCount;
   }
 
-  public class LikeButtonOnClickListener implements View.OnClickListener {
-    private int position;
+  private void likeFeed(Feed feed){
+    ParseObject like = new ParseObject("Like");
+    like.put("user", ParseUser.getCurrentUser());
+    like.put("adventureId", feed.getObjId());
+    like.saveInBackground();
+  }
 
-    public LikeButtonOnClickListener(int position) {
-      this.position = position;
-    }
-
-    @Override
-    public void onClick(View v) {
-      // Cast v as ImageButton
-      ImageButton likeButton = (ImageButton)v;
-
-      // Get Feed/Adventure affected
-      Feed feed = feedList.get(position);
-
-      if (CurrentUser.getInstance().isLoggedIn()) {
-        Toast.makeText(context, "Please log in before liking.", Toast.LENGTH_SHORT).show();
-        return;
+  private void unlikeFeed(Feed feed) {
+    ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
+    query.whereEqualTo("user", ParseUser.getCurrentUser());
+    query.whereEqualTo("adventureId", feed.getObjId());
+    query.findInBackground(new FindCallback<ParseObject>() {
+      @Override
+      public void done(List<ParseObject> parseObjects, ParseException e) {
+        for (ParseObject obj : parseObjects) {
+          obj.deleteInBackground();
+        }
       }
-      String fbId = CurrentUser.getInstance().getUserId();
-
-      try {
-        // Attempt to retrieve "Like" entry for this Adventure
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
-        query.whereEqualTo("fbId", fbId);
-        query.whereEqualTo("adventureId", feed.getObjId());
-        ParseObject likeEntry = query.getFirst();
-
-        // Remove the entry and decrease adventure's likesCount
-        likeEntry.deleteInBackground();
-        feed.offsetLikesCount(-1);
-        // TODO: Switch to "empty" like button
-        likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
-      }
-      catch (ParseException e) {
-        // Add new "Like" entry and increase adventure's likesCount
-        ParseObject like = new ParseObject("Like");
-        like.put("fbId", fbId);
-        like.put("adventureId", feed.getObjId());
-        like.saveInBackground();
-        feed.offsetLikesCount(1);
-        // TODO: Switch to "filled in" like button
-        likeButton.setImageResource(R.drawable.ic_heart_small_blue);
-      }
-
-      Toast.makeText(context, "likeCount is " + feed.getLikesCount(), Toast.LENGTH_SHORT).show();
-    }
-
-    public void test() {}
+    });
   }
 }
 

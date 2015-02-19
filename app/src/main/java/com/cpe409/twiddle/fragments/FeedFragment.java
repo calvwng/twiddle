@@ -64,7 +64,7 @@ public class FeedFragment extends Fragment {
     super.onActivityCreated(savedInstanceState);
     setupReferences();
     setupListeners();
-    
+
     feedList = new ArrayList<Feed>();
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
     listView.setAdapter(listAdapter);
@@ -106,7 +106,10 @@ public class FeedFragment extends Fragment {
   private void queryFeedStories(final double latMax, final double latMin, final double lonMax,
                                 final double lonMin) {
     ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Adventure");
-    query.include("adventureLocation");
+    query.whereGreaterThan("locationLatitude", latMin);
+    query.whereGreaterThan("locationLongitude", lonMin);
+    query.whereLessThan("locationLatitude", latMax);
+    query.whereLessThan("locationLongitude", lonMax);
     query.include("author");
 
     query.findInBackground(new FindCallback<ParseObject>() {
@@ -118,21 +121,14 @@ public class FeedFragment extends Fragment {
         }
 
         for (ParseObject adventure : parseObjects) {
-          ParseObject location = adventure.getParseObject("adventureLocation");
-          double lat = location.getDouble("locationLatitude");
-          double lon = location.getDouble("locationLongitude");
-
-          if (lat < latMax && lat > latMin) {
-            if (lon < lonMax && lon > lonMin) {
-              ParseObject author = adventure.getParseObject("author");
-              Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
-              feedList.add(feed);
-            }
-          }
+          ParseObject author = adventure.getParseObject("author");
+          Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
+          feedList.add(feed);
         }
 
         listAdapter.notifyDataSetChanged();
       }
+
     });
   }
 

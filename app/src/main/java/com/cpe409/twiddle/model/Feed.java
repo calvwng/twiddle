@@ -1,7 +1,5 @@
 package com.cpe409.twiddle.model;
 
-import android.hardware.Camera;
-
 import com.parse.ParseObject;
 
 /**
@@ -14,6 +12,7 @@ public class Feed {
   private String description;
   private int likesCount;
   private FacebookUser author;
+  private boolean liked;
 
   public Feed() {
 
@@ -34,6 +33,7 @@ public class Feed {
     feed.description = adventure.getString("adventureDescription");
     feed.likesCount = adventure.getInt("likes");
     feed.author = author;
+    feed.liked = false;
     return feed;
   }
 
@@ -57,7 +57,15 @@ public class Feed {
     return likesCount;
   }
 
-  public int offsetLikesCount(int offset) {
-    return likesCount += offset;
+  public boolean getIsLiked() {
+    return liked;
+  }
+
+  public void setLikesCount(int count) {
+    this.likesCount = count;
+  }
+
+  public void setLiked(Boolean liked) {
+    this.liked = liked;
   }
 }
