@@ -42,3 +42,13 @@ We are considering using Amazon S3 to store any photos/media for each activity s
 # Initial Use Case Diagram
 ![](https://36.media.tumblr.com/219aa792792cf47d220b0d79892bea72/tumblr_njp715jAwt1u7eu2po2_540.png)
 
+# Technical Overview
+For the Twiddle app, we used a standard Java back-end with front-end layouts defined through XML because this is the standard setup for building Android apps and using the Android API.
+
+For our cloud platform/database, we chose Parse because most of the team was familiar with it already and its documentation is clear and easy to search through.
+
+In our current vertical prototype, we are using the Parse API for database management and the Google Maps API for retrieving/searching for locations.
+
+We are using a Git repository for version control because it allows our team to easily work independently when needed and track our code revisions on GitHub.
+
+In addition, we are using Facebook's authentication for our login/user system.
