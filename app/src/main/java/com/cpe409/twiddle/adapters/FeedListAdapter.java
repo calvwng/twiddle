@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.views.RoundImageView;
 import com.parse.FindCallback;
@@ -126,12 +127,12 @@ public class FeedListAdapter extends BaseAdapter {
 
       // Get Feed/Adventure affected
       Feed feed = feedList.get(position);
-      ParseUser user = ParseUser.getCurrentUser();
-      if (user == null) {
+
+      if (CurrentUser.getInstance().isLoggedIn()) {
         Toast.makeText(context, "Please log in before liking.", Toast.LENGTH_SHORT).show();
         return;
       }
-      String fbId = (String)user.get("fbId");
+      String fbId = CurrentUser.getInstance().getUserId();
 
       try {
         // Attempt to retrieve "Like" entry for this Adventure

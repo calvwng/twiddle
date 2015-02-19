@@ -3,9 +3,9 @@
 
     <string name="app_name">Twiddle</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login">Login</string>
     <string name="facebook_app_id">753967378005166</string>
-    <string name="google_maps_api_key">PRIVATE</string>
+    <string name="google_maps_api_key">AIzaSyAIpFT40C6rNZWMPCTyPuGNoTOQIkhz-_s</string>
     <string name="action_settings">Settings</string>
     <string name="action_create">Create</string>
     <string name="action_search">Search</string>
@@ -17,6 +17,6 @@
     <string name="addimage_fragment_takePicture">Take a new picture!</string>
     <string name="addimage_fragment_gallery">Upload from Gallery</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_add_image">AddImageActivity</string>
+    <string name="title_activity_add_image">Add Image</string>
 
 </resources>
