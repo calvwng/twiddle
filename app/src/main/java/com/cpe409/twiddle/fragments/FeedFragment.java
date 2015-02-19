@@ -24,9 +24,12 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -102,8 +105,25 @@ public class FeedFragment extends Fragment {
     });
   }
 
-
   private void queryFeedStories(final double latMax, final double latMin, final double lonMax,
+                                final double lonMin) {
+    // Query Likes
+    ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
+    query.whereEqualTo("user", ParseUser.getCurrentUser());
+    query.findInBackground(new FindCallback<ParseObject>() {
+      @Override
+      public void done(List<ParseObject> parseObjects, ParseException e) {
+        Set<String> feedLikes = new HashSet<String>();
+        for (ParseObject obj : parseObjects) {
+          feedLikes.add(obj.getString("adventureId"));
+        }
+        queryAdventures(feedLikes, latMax, latMin, lonMax, lonMin);
+      }
+    });
+  }
+
+
+  private void queryAdventures(final Set<String> feedLikes, final double latMax, final double latMin, final double lonMax,
                                 final double lonMin) {
     ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Adventure");
     query.whereGreaterThan("locationLatitude", latMin);
@@ -123,6 +143,7 @@ public class FeedFragment extends Fragment {
         for (ParseObject adventure : parseObjects) {
           ParseObject author = adventure.getParseObject("author");
           Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
+          feed.setLiked(feedLikes.contains(feed.getObjId()));
           feedList.add(feed);
         }
 

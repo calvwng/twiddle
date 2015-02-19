@@ -23,6 +23,7 @@ import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.views.RoundImageView;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -100,6 +101,7 @@ public class FeedListAdapter extends BaseAdapter {
       Picasso.with(context).load(imgUrl).into(holder.feedPicture);
     }
 
+
     holder.likeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -116,7 +118,6 @@ public class FeedListAdapter extends BaseAdapter {
           feed.setLikesCount(feed.getLikesCount() + 1);
           feed.setLiked(true);
           holder.likesCount.setText(feed.getLikesCount() + " likes");
-          //holder.likeButton.setImageResource(R.drawable.ic_heart_red);
           animateHeartButton(holder);
           animatePhotoLike(holder);
         } // Unlike the feed
@@ -129,6 +130,12 @@ public class FeedListAdapter extends BaseAdapter {
         }
       }
     });
+
+    if (feed.getIsLiked()) {
+      holder.likeButton.setImageResource(R.drawable.ic_heart_red);
+    } else {
+      holder.likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
+    }
 
     holder.likesCount.setCurrentText(feed.getLikesCount() + " likes");
     return view;
@@ -222,13 +229,24 @@ public class FeedListAdapter extends BaseAdapter {
     holder.feedLike.setVisibility(View.GONE);
   }
 
+  //TODO: Create cloud code that handles these two queries into one query.
   private void likeFeed(Feed feed){
     ParseObject like = new ParseObject("Like");
     like.put("user", ParseUser.getCurrentUser());
     like.put("adventureId", feed.getObjId());
     like.saveInBackground();
+
+    ParseQuery<ParseObject> query = ParseQuery.getQuery("Adventure");
+    query.getInBackground(feed.getObjId(), new GetCallback<ParseObject>() {
+      @Override
+      public void done(ParseObject parseObject, ParseException e) {
+        parseObject.put("likes", parseObject.getInt("likes") + 1);
+        parseObject.saveInBackground();
+      }
+    });
   }
 
+  //TODO: Create cloud code that handles these two queries into one query.
   private void unlikeFeed(Feed feed) {
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
     query.whereEqualTo("user", ParseUser.getCurrentUser());
@@ -239,6 +257,15 @@ public class FeedListAdapter extends BaseAdapter {
         for (ParseObject obj : parseObjects) {
           obj.deleteInBackground();
         }
+      }
+    });
+
+    ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Adventure");
+    query2.getInBackground(feed.getObjId(), new GetCallback<ParseObject>() {
+      @Override
+      public void done(ParseObject parseObject, ParseException e) {
+        parseObject.put("likes", parseObject.getInt("likes") - 1);
+        parseObject.saveInBackground();
       }
     });
   }
