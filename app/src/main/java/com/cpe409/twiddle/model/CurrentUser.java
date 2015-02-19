@@ -7,19 +7,34 @@ import com.parse.ParseUser;
 /**
  * Created by Michael on 2/18/2015.
  */
-public class CurrentUser extends FacebookUser{
+public class CurrentUser extends FacebookUser {
 
   private static CurrentUser instance;
+  private boolean loggedIn;
 
   public static CurrentUser getInstance() {
     if (instance == null) {
-      instance = new CurrentUser(ParseUser.getCurrentUser());
+      if (ParseUser.getCurrentUser() == null) {
+        instance = new CurrentUser();
+      } else {
+        instance = new CurrentUser(ParseUser.getCurrentUser());
+      }
     }
     return instance;
   }
 
+  private CurrentUser() {
+    super();
+    loggedIn = false;
+  }
+
   private CurrentUser(ParseObject object) {
     super(object);
+    loggedIn = true;
+  }
+
+  public boolean isLoggedIn() {
+    return loggedIn;
   }
 
 }

@@ -57,11 +57,17 @@ public class MainActivity extends MaterialNavigationDrawer {
    */
   public void initNavDrawer() {
     this.disableLearningPattern(); // Hides drawer on start
-    this.setUsername("Test User");
 
-    account = new MaterialAccount(this.getResources(), "",
-        CurrentUser.getInstance().getName(),
-        R.drawable.ic_action_account_circle, R.drawable.bg_nav_drawer);
+    if (CurrentUser.getInstance().isLoggedIn()) {
+      account = new MaterialAccount(this.getResources(), "",
+          CurrentUser.getInstance().getName(),
+          R.drawable.ic_action_account_circle, R.drawable.bg_nav_drawer);
+    } else {
+      account = new MaterialAccount(this.getResources(), "",
+          "Guest",
+          R.drawable.ic_action_account_circle, R.drawable.bg_nav_drawer);
+    }
+
 
     MaterialSection browseSection = this.newSection("Adventures", FeedFragment.newInstance()); // TODO: set drawable & fragment
     MaterialSection favoritesSection = this.newSection("Favorites", new Fragment()); // TODO: set drawable & fragment
@@ -73,7 +79,9 @@ public class MainActivity extends MaterialNavigationDrawer {
     this.addSection(logoutSection);
     this.addAccount(account);
 
-    Picasso.with(this).load(CurrentUser.getInstance().getImageURL()).into(userPhoto);
+    if (CurrentUser.getInstance().isLoggedIn()) {
+      Picasso.with(this).load(CurrentUser.getInstance().getImageURL()).into(userPhoto);
+    }
   }
 
   @Override

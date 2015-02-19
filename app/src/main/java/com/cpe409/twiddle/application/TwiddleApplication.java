@@ -1,9 +1,17 @@
 package com.cpe409.twiddle.application;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.util.Base64;
+import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Michael on 2/5/2015.

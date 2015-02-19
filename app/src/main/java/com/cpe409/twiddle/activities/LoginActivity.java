@@ -3,10 +3,13 @@ package com.cpe409.twiddle.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +29,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.CirclePageIndicator;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class LoginActivity extends ActionBarActivity {
@@ -56,6 +61,8 @@ public class LoginActivity extends ActionBarActivity {
     login_indicator.setSnap(true);
     login_indicator.setViewPager(viewPager_);
   }
+
+
 
   private boolean isExistingUser() {
     ParseUser user = ParseUser.getCurrentUser();

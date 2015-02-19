@@ -22,6 +22,9 @@ public class FacebookUser {
     this.name = user.getString("fbName");
   }
 
+  public FacebookUser() {}
+
+
   public String getUserId() {
     return userId;
   }
