@@ -35,10 +35,12 @@ public class MainActivity extends MaterialNavigationDrawer {
 
   private MaterialAccount account;
   private Target userPhoto = new Target() {
+
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
       account.setPhoto(bitmap.copy(Bitmap.Config.ARGB_8888, true));
-      notifyAccountDataChanged();
+      // do not call notifyAccountDataChanged();, because the library get your drawable/bitmap
+      // and call the notifyAccountDataChanged when the scaled and resized drawable will be available.
     }
 
     @Override
