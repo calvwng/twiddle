@@ -24,11 +24,13 @@ import com.parse.SaveCallback;
 public class CreateFragment extends Fragment {
 
   private final static int SELECT_LOCATION_REQUEST = 1;
+  private final static int ADD_IMAGE_REQUEST = 2;
   private View rootView;
 
   private EditText editTextTitle_;
   private EditText editTextDescription_;
   private TextView textViewLocation;
+  private TextView textViewImage;
   private ProgressDialog pDialogMap;
 
   @Override
@@ -70,9 +72,12 @@ public class CreateFragment extends Fragment {
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == SELECT_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
-      Location location = (Location) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
-      this.textViewLocation.setText(location.strAddress);
-      this.textViewLocation.setTag(location);
+        Location location = (Location) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
+        this.textViewLocation.setText(location.strAddress);
+        this.textViewLocation.setTag(location);
+    } else if (requestCode == ADD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+        /* TODO: Make it image in future */
+        this.textViewImage.setText("Image Selected!");
     }
   }
 
@@ -80,6 +85,7 @@ public class CreateFragment extends Fragment {
     this.editTextTitle_ = (EditText) this.rootView.findViewById(R.id.editTextTitle);
     this.editTextDescription_ = (EditText) this.rootView.findViewById(R.id.editTextDescription);
     this.textViewLocation = (TextView) this.rootView.findViewById(R.id.textViewAddLocation);
+    this.textViewImage = (TextView) this.rootView.findViewById(R.id.textViewAddImage);
   }
 
   private void addEvents() {
@@ -94,6 +100,16 @@ public class CreateFragment extends Fragment {
         startActivityForResult(intent, SELECT_LOCATION_REQUEST);
       }
     });
+
+      this.textViewImage.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              pDialogMap = ProgressDialog.show(getActivity(), "", "Opening Image Selector...", true);
+
+              Intent intent = new Intent(context, AddImageActivity.class);
+              startActivityForResult(intent, ADD_IMAGE_REQUEST);
+          }
+      });
   }
 
   private void checkInputAndSave() {

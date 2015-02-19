@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.cpe409.twiddle.activities.AddImageActivity">
+
+    <item android:id="@+id/action_camera"
+        android:title="Take Picture"
+        android:icon="@drawable/ic_action_image_camera_alt"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/action_gallery"
+        android:title="Choose From Gallery"
+        android:icon="@drawable/ic_action_action_perm_media"
+        app:showAsAction="always"/>
+
+</menu>
