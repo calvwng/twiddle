@@ -127,15 +127,12 @@ public class CreateFragment extends Fragment {
 
   private void saveObject(String title, String description, Location location) {
     ParseObject adventureObject = new ParseObject("Adventure");
-    ParseObject locationObject = new ParseObject("Location");
-
-    locationObject.put("locationLatitude", location.latitude);
-    locationObject.put("locationLongitude", location.longitude);
-    locationObject.put("locationAddress", location.strAddress);
 
     adventureObject.put("adventureTitle", title);
     adventureObject.put("adventureDescription", description);
-    adventureObject.put("adventureLocation", locationObject);
+    adventureObject.put("locationLatitude", location.latitude);
+    adventureObject.put("locationLongitude", location.longitude);
+    adventureObject.put("locationAddress", location.strAddress);
     adventureObject.put("author", ParseUser.getCurrentUser());
 
 
