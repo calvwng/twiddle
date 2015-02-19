@@ -51,6 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:alpha="0.5"
+                android:src="@drawable/bg_nav_drawer"
                 android:scaleType="centerCrop"/>
 
             <TextView

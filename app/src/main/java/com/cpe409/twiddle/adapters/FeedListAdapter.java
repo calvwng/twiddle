@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
@@ -32,12 +33,15 @@ import java.util.List;
 
 /**
  * Created by Michael on 2/17/2015.
+ * View and animations pulled from:
+ * http://frogermcs.github.io/InstaMaterial-concept-part-5-like_action_effects/
  */
 public class FeedListAdapter extends BaseAdapter {
 
   private Context context;
   private List<Feed> feedList;
 
+  private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
   private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
   private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
   private static final String TAG = FeedListAdapter.class.getSimpleName();
@@ -114,6 +118,7 @@ public class FeedListAdapter extends BaseAdapter {
           holder.likesCount.setText(feed.getLikesCount() + " likes");
           //holder.likeButton.setImageResource(R.drawable.ic_heart_red);
           animateHeartButton(holder);
+          animatePhotoLike(holder);
         } // Unlike the feed
         else {
           unlikeFeed(feed);
@@ -160,6 +165,55 @@ public class FeedListAdapter extends BaseAdapter {
       }
     });
 
+    animatorSet.start();
+  }
+
+  private void animatePhotoLike(final ViewHolder holder) {
+    holder.feedBgLike.setVisibility(View.VISIBLE);
+    holder.feedLike.setVisibility(View.VISIBLE);
+
+    holder.feedBgLike.setScaleY(0.1f);
+    holder.feedBgLike.setScaleX(0.1f);
+    holder.feedBgLike.setAlpha(1f);
+    holder.feedLike.setScaleY(0.1f);
+    holder.feedLike.setScaleX(0.1f);
+
+    AnimatorSet animatorSet = new AnimatorSet();
+
+    ObjectAnimator bgScaleYAnim = ObjectAnimator.ofFloat(holder.feedBgLike, "scaleY", 0.1f, 1f);
+    bgScaleYAnim.setDuration(200);
+    bgScaleYAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+    ObjectAnimator bgScaleXAnim = ObjectAnimator.ofFloat(holder.feedBgLike, "scaleX", 0.1f, 1f);
+    bgScaleXAnim.setDuration(200);
+    bgScaleXAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+    ObjectAnimator bgAlphaAnim = ObjectAnimator.ofFloat(holder.feedBgLike, "alpha", 1f, 0f);
+    bgAlphaAnim.setDuration(200);
+    bgAlphaAnim.setStartDelay(150);
+    bgAlphaAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+
+    ObjectAnimator imgScaleUpYAnim = ObjectAnimator.ofFloat(holder.feedLike, "scaleY", 0.1f, 1f);
+    imgScaleUpYAnim.setDuration(300);
+    imgScaleUpYAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+    ObjectAnimator imgScaleUpXAnim = ObjectAnimator.ofFloat(holder.feedLike, "scaleX", 0.1f, 1f);
+    imgScaleUpXAnim.setDuration(300);
+    imgScaleUpXAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+
+    ObjectAnimator imgScaleDownYAnim = ObjectAnimator.ofFloat(holder.feedLike, "scaleY", 1f, 0f);
+    imgScaleDownYAnim.setDuration(300);
+    imgScaleDownYAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+    ObjectAnimator imgScaleDownXAnim = ObjectAnimator.ofFloat(holder.feedLike, "scaleX", 1f, 0f);
+    imgScaleDownXAnim.setDuration(300);
+    imgScaleDownXAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+
+    animatorSet.playTogether(bgScaleYAnim, bgScaleXAnim, bgAlphaAnim, imgScaleUpYAnim, imgScaleUpXAnim);
+    animatorSet.play(imgScaleDownYAnim).with(imgScaleDownXAnim).after(imgScaleUpYAnim);
+
+    animatorSet.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        resetLikeAnimationState(holder);
+      }
+    });
     animatorSet.start();
   }
 
