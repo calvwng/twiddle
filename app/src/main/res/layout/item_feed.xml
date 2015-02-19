@@ -19,12 +19,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:orientation="horizontal">
 
             <com.cpe409.twiddle.views.RoundImageView
                 android:id="@+id/feedUserImage"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginRight="8dp"
                 android:layout_gravity="center"
                 android:scaleType="center"/>
 
