@@ -1,9 +1,15 @@
 package com.cpe409.twiddle.adapters;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,7 +37,11 @@ public class FeedListAdapter extends BaseAdapter {
 
   private Context context;
   private List<Feed> feedList;
-  private final String TAG = FeedListAdapter.class.getSimpleName();
+
+  private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+  private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
+  private static final String TAG = FeedListAdapter.class.getSimpleName();
+
   public FeedListAdapter(Context context, List<Feed> feedList) {
     this.context = context;
     this.feedList = feedList;
@@ -102,7 +112,8 @@ public class FeedListAdapter extends BaseAdapter {
           feed.setLikesCount(feed.getLikesCount() + 1);
           feed.setLiked(true);
           holder.likesCount.setText(feed.getLikesCount() + " likes");
-          holder.likeButton.setImageResource(R.drawable.ic_heart_small_blue);
+          //holder.likeButton.setImageResource(R.drawable.ic_heart_red);
+          animateHeartButton(holder);
         } // Unlike the feed
         else {
           unlikeFeed(feed);
@@ -118,19 +129,43 @@ public class FeedListAdapter extends BaseAdapter {
     return view;
   }
 
+  private void animateHeartButton(final ViewHolder holder) {
+    AnimatorSet animatorSet = new AnimatorSet();
 
-  static class ViewHolder {
-    Feed feed;
-    RoundImageView authorImage;
-    TextView authorName;
-    ImageView feedPicture;
-    TextView feedTitle;
-    View feedBgLike;
-    ImageView feedLike;
-    ImageButton likeButton;
-    ImageButton commentsButton;
-    ImageButton moreButton;
-    TextSwitcher likesCount;
+    ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.likeButton, "rotation", 0f, 360f);
+    rotationAnim.setDuration(300);
+    rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+
+    ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.likeButton, "scaleX", 0.2f, 1f);
+    bounceAnimX.setDuration(300);
+    bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+    ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.likeButton, "scaleY", 0.2f, 1f);
+    bounceAnimY.setDuration(300);
+    bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+    bounceAnimY.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationStart(Animator animation) {
+        holder.likeButton.setImageResource(R.drawable.ic_heart_red);
+      }
+    });
+
+    animatorSet.play(rotationAnim);
+    animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+
+    animatorSet.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        resetLikeAnimationState(holder);
+      }
+    });
+
+    animatorSet.start();
+  }
+
+  private void resetLikeAnimationState(ViewHolder holder) {
+    holder.feedBgLike.setVisibility(View.GONE);
+    holder.feedLike.setVisibility(View.GONE);
   }
 
   private void likeFeed(Feed feed){
@@ -152,6 +187,20 @@ public class FeedListAdapter extends BaseAdapter {
         }
       }
     });
+  }
+
+  static class ViewHolder {
+    Feed feed;
+    RoundImageView authorImage;
+    TextView authorName;
+    ImageView feedPicture;
+    TextView feedTitle;
+    View feedBgLike;
+    ImageView feedLike;
+    ImageButton likeButton;
+    ImageButton commentsButton;
+    ImageButton moreButton;
+    TextSwitcher likesCount;
   }
 }
 
