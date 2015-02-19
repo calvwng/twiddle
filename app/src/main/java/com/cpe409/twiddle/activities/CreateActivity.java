@@ -17,7 +17,7 @@ public class CreateActivity extends ActionBarActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    transaction.add(R.id.container, new CreateFragment()).commit();
+    transaction.replace(R.id.container, new CreateFragment()).commit();
   }
 
   @Override

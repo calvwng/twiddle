@@ -83,21 +83,22 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
   public void onMapReady(GoogleMap googleMap) {
     LatLngBounds boundsUSA = new LatLngBounds(new LatLng(23, -125), new LatLng(47, -66));
     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(boundsUSA.getCenter(), 2));
-
     googleMap.setMyLocationEnabled(true);
 
     this.googleMap = googleMap;
   }
 
   private void sendLocation() {
-    LatLng latLng = this.googleMap.getCameraPosition().target;
-    Location location = new Location(latLng, getAddress(latLng));
+    if (this.googleMap != null) {
+      LatLng latLng = this.googleMap.getCameraPosition().target;
+      Location location = new Location(latLng, getAddress(latLng));
 
-    Intent resultIntent = new Intent();
-    resultIntent.putExtra(EXTRA_LOCATION, location);
+      Intent resultIntent = new Intent();
+      resultIntent.putExtra(EXTRA_LOCATION, location);
 
-    setResult(RESULT_OK, resultIntent);
-    finish();
+      setResult(RESULT_OK, resultIntent);
+      finish();
+    }
   }
 
   private Address getAddress(LatLng latLng) {
@@ -116,8 +117,7 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
   private LatLng getCoordinateFromAddress(String locationAddress) throws IOException {
     Geocoder geocoder = new Geocoder(this);
     Address address = geocoder.getFromLocationName(locationAddress, 1).get(0);
-    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
 
-    return latLng;
+    return new LatLng(address.getLatitude(), address.getLongitude());
   }
 }
