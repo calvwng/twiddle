@@ -6,6 +6,7 @@
     <string name="title_activity_login">Login</string>
     <string name="facebook_app_id">753967378005166</string>
     <string name="google_maps_api_key">AIzaSyAIpFT40C6rNZWMPCTyPuGNoTOQIkhz-_s</string>
+    <string name="google_maps_api_key_release">AIzaSyDbDfGn09u3c_hu9h1hE5k_DDmT93qHL2g</string>
     <string name="action_settings">Settings</string>
     <string name="action_create">Create</string>
     <string name="action_search">Search</string>
