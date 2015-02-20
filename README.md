@@ -52,3 +52,11 @@ In our current vertical prototype, we are using the Parse API for database manag
 We are using a Git repository for version control because it allows our team to easily work independently when needed and track our code revisions on GitHub.
 
 In addition, we are using Facebook's authentication for our login/user system.
+
+# Vertical Prototype
+Our Milestone 2 vertical prototype is available for download in apk form at: https://drive.google.com/file/d/0B9gofKm21tHgZnRsazVzTWdSekE/view?usp=sharing
+
+(Make sure your Android device is set to allow installation of apks with unknown sources.)
+
+Once we decide on a logo and add more functionality, we will create a beta store page for releasing updates.
+Our Milestone 2 vertical prototype app includes the ability to log in via Facebook and use our navigation drawer, which allows the user to log out or navigate between an Adventures feed (implemented), a Favorite adventures list (placeholder), and a Settings menu (placeholder). Adventures displayed on the Adventures feed can be liked or unliked by the user, and the logged in user can create a new Adventure with the floating button on the feed (currently the new Adventure won't appear until the app is restarted). For this milestone we just wanted to show our successful calls to the Facebook, Parse, and Google Maps APIs, so the location input for new Adventures is simply based on coordinates for now. Images to be captured/uploaded for an Adventure are not yet used within the app, but this will likely be the next task we address.
