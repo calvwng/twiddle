@@ -39,6 +39,29 @@
                 android:textColor="@color/text_secondary"
                 android:gravity="center"/>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_maps_place_black"
+                    android:layout_toLeftOf="@+id/feedDistance"
+                    android:padding="-12dp"/>
+
+                <TextView
+                    android:id="@+id/feedDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="1dp"
+                    android:text="0.5 m"
+                    android:textColor="@color/text_secondary"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"/>
+            </RelativeLayout>
+
+
         </LinearLayout>
 
 

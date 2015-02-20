@@ -2,6 +2,8 @@ package com.cpe409.twiddle.model;
 
 import com.parse.ParseObject;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by Michael on 2/17/2015.
  */
@@ -13,6 +15,7 @@ public class Feed {
   private int likesCount;
   private FacebookUser author;
   private boolean liked;
+  private String distance;
 
   public Feed() {
 
@@ -67,5 +70,14 @@ public class Feed {
 
   public void setLiked(Boolean liked) {
     this.liked = liked;
+  }
+
+  public String getDistance() {
+    return this.distance;
+  }
+
+  public void setDistance(float distance) {
+    DecimalFormat df = new DecimalFormat("#.#");
+    this.distance = df.format(distance);
   }
 }

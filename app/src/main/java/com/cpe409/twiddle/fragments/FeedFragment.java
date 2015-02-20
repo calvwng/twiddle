@@ -43,7 +43,9 @@ public class FeedFragment extends Fragment {
   private List<Feed> feedList;
   private Activity activity;
   private Context context;
+  private Location location;
   private FloatingActionButton floatingActionButton;
+  private static final float MetersToMiles = 0.000621371f;
 
   /**
    * Use this factory method to create a new instance of
@@ -72,7 +74,7 @@ public class FeedFragment extends Fragment {
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
     listView.setAdapter(listAdapter);
 
-    Location location = LocationHelper.getInstance().getLocation(context);
+    location = LocationHelper.getInstance().getLocation(context);
     if (location == null) {
       Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
       return;
@@ -143,6 +145,10 @@ public class FeedFragment extends Fragment {
         for (ParseObject adventure : parseObjects) {
           ParseObject author = adventure.getParseObject("author");
           Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
+          Location feedLocation = new Location("");
+          feedLocation.setLatitude(adventure.getDouble("locationLatitude"));
+          feedLocation.setLongitude(adventure.getDouble("locationLongitude"));
+          feed.setDistance(feedLocation.distanceTo(location) * MetersToMiles);
           feed.setLiked(feedLikes.contains(feed.getObjId()));
           feedList.add(feed);
         }

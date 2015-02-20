@@ -80,6 +80,7 @@ public class FeedListAdapter extends BaseAdapter {
       holder.authorName = (TextView) view.findViewById(R.id.feedUserName);
       holder.feedPicture = (ImageView) view.findViewById(R.id.feedPicture);
       holder.feedTitle = (TextView) view.findViewById(R.id.feedTitle);
+      holder.feedDistance = (TextView) view.findViewById(R.id.feedDistance);
       holder.feedBgLike = view.findViewById(R.id.feedBgLike);
       holder.feedLike = (ImageView) view.findViewById(R.id.feedLike);
       holder.likeButton = (ImageButton) view.findViewById(R.id.btnLike);
@@ -95,7 +96,7 @@ public class FeedListAdapter extends BaseAdapter {
     Picasso.with(context).load(feed.getAuthor().getImageURL()).into(holder.authorImage);
     holder.authorName.setText(feed.getAuthor().getName());
     holder.feedTitle.setText(feed.getTitle());
-
+    holder.feedDistance.setText(feed.getDistance() + " Mi");
     String imgUrl = feed.getImgUrl();
     if (imgUrl != null) {
       Picasso.with(context).load(imgUrl).into(holder.feedPicture);
@@ -276,6 +277,7 @@ public class FeedListAdapter extends BaseAdapter {
     TextView authorName;
     ImageView feedPicture;
     TextView feedTitle;
+    TextView feedDistance;
     View feedBgLike;
     ImageView feedLike;
     ImageButton likeButton;
