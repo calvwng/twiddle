@@ -92,7 +92,7 @@ public class MainActivity extends MaterialNavigationDrawer {
     MaterialSection browseSection = this.newSection("Adventures", FeedFragment.newInstance()); // TODO: set drawable & fragment
     MaterialSection favoritesSection = this.newSection("Favorites", new Fragment()); // TODO: set drawable & fragment
     MaterialSection settingsSection = this.newSection("Settings", new Fragment()); // TODO: set drawable & fragment
-    MaterialSection logoutSection = this.newSection("Logout", new Fragment()); // TODO: set drawable & fragment
+    MaterialSection logoutSection = this.newSection("Logout", R.drawable.ic_action_exit_to_app, new Fragment()); // TODO: set drawable & fragment
     logoutSection.setOnClickListener(new MaterialSectionListener() {
 
       @Override

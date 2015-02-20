@@ -22,8 +22,8 @@ public class LoginPagerAdapter extends PagerAdapter {
   private static String[] viewpageTitles = {"Explore",
       "Share",
       "Adventure"};
-  private static int[] viewpageIcons = new int[]{R.drawable.ic_launcher, R.drawable.ic_launcher,
-      R.drawable.ic_launcher};
+  private static int[] viewpageIcons = new int[]{R.drawable.ic_action_explore, R.drawable.ic_social_share,
+      R.drawable.ic_maps_place};
   private static int[] viewpageBackgrounds = new int[]{R.drawable.bubbleball,
       R.drawable.beach, R.drawable.adventure};
 
