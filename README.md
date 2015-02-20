@@ -62,3 +62,8 @@ Our Milestone 2 vertical prototype is available for download in apk form at: htt
 
 Once we decide on a logo and add more functionality, we will create a beta store page for releasing updates.
 Our Milestone 2 vertical prototype app includes the ability to log in via Facebook and use our navigation drawer, which allows the user to log out or navigate between an Adventures feed (implemented), a Favorite adventures list (placeholder), and a Settings menu (placeholder). Adventures displayed on the Adventures feed can be liked or unliked by the user, and the logged in user can create a new Adventure with the floating button on the feed (currently the new Adventure won't appear until the app is restarted). For this milestone we just wanted to show our successful calls to the Facebook, Parse, and Google Maps APIs, so the location input for new Adventures is simply based on coordinates for now. Images to be captured/uploaded for an Adventure are not yet used within the app, but this will likely be the next task we address.
+
+![](https://41.media.tumblr.com/1deb8b3c6e3eb6fd22cab3d6edf6ea04/tumblr_nk28n3U7mT1u7eu2po1_1280.png)
+![](https://41.media.tumblr.com/0692badb7a75c06433dc573b00676420/tumblr_nk28n3U7mT1u7eu2po3_1280.png)
+![](https://40.media.tumblr.com/55aab34feec211ec285cc78c2ef46597/tumblr_nk28n3U7mT1u7eu2po2_1280.png)
+![](https://40.media.tumblr.com/7dc6d70654eccd3e9e21e5645c89764f/tumblr_nk28n3U7mT1u7eu2po4_1280.png)
