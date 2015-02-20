@@ -49,7 +49,9 @@ For our cloud platform/database, we chose Parse because most of the team was fam
 
 In our current vertical prototype, we are using the Parse API for database management and the Google Maps API for retrieving/searching for locations.
 
-We are using a Git repository for version control because it allows our team to easily work independently when needed and track our code revisions on GitHub.
+We are using a Git repository for version control because it allows our team to easily work independently when needed and track our code revisions on GitHub. 
+
+Our Twiddle repository can be found at: https://github.com/calvwng/twiddle
 
 In addition, we are using Facebook's authentication for our login/user system.
 
