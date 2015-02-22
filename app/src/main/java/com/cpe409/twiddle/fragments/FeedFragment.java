@@ -72,7 +72,7 @@ public class FeedFragment extends Fragment {
     setupReferences();
     setupListeners();
 
-    feedList = new ArrayList<Feed>();
+    feedList = new ArrayList<>();
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
     listView.setAdapter(listAdapter);
     refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -82,6 +82,7 @@ public class FeedFragment extends Fragment {
       }
     });
 
+    refreshLayout.setRefreshing(true);
     queryFeedStories();
   }
 
@@ -104,6 +105,7 @@ public class FeedFragment extends Fragment {
   private void queryFeedStories() {
     location = LocationHelper.getInstance().getLocation(context);
     if (location == null) {
+      refreshLayout.setRefreshing(false);
       Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
       return;
     }
@@ -123,7 +125,13 @@ public class FeedFragment extends Fragment {
     query.findInBackground(new FindCallback<ParseObject>() {
       @Override
       public void done(List<ParseObject> parseObjects, ParseException e) {
-        Set<String> feedLikes = new HashSet<String>();
+        if (e != null) {
+          UtilHelper.throwToastError(context, e);
+          refreshLayout.setRefreshing(false);
+          return;
+        }
+
+        Set<String> feedLikes = new HashSet<>();
         for (ParseObject obj : parseObjects) {
           feedLikes.add(obj.getString("adventureId"));
         }
@@ -135,7 +143,7 @@ public class FeedFragment extends Fragment {
 
   private void queryAdventures(final Set<String> feedLikes, final double latMax, final double latMin, final double lonMax,
                                 final double lonMin) {
-    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Adventure");
+    ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
     query.whereGreaterThan("locationLatitude", latMin);
     query.whereGreaterThan("locationLongitude", lonMin);
     query.whereLessThan("locationLatitude", latMax);
@@ -147,6 +155,7 @@ public class FeedFragment extends Fragment {
       public void done(List<ParseObject> parseObjects, ParseException e) {
         if (e != null) {
           UtilHelper.throwToastError(context, e);
+          refreshLayout.setRefreshing(false);
           return;
         }
 
