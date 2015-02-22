@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class FeedFragment extends Fragment {
   private Context context;
   private Location location;
   private FloatingActionButton floatingActionButton;
+  private SwipeRefreshLayout refreshLayout;
   private static final float MetersToMiles = 0.000621371f;
 
   /**
@@ -73,28 +75,20 @@ public class FeedFragment extends Fragment {
     feedList = new ArrayList<Feed>();
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
     listView.setAdapter(listAdapter);
+    refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        queryFeedStories();
+      }
+    });
 
-    location = LocationHelper.getInstance().getLocation(context);
-    if (location == null) {
-      Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
-      return;
-    }
-
-    double lat = location.getLatitude();
-    double lon = location.getLongitude();
-    double earthRadius = 6371;  // earth radius in km
-    double radius = 100; // km
-    double longMin = lon - Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
-    double longMax = lon + Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
-    double latMax = lat + Math.toDegrees(radius / earthRadius);
-    double latMin = lat - Math.toDegrees(radius / earthRadius);
-
-    queryFeedStories(latMax, latMin, longMax, longMin);
+    queryFeedStories();
   }
 
   private void setupReferences() {
     listView = (ListView) activity.findViewById(R.id.feedListView);
     floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
+    refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
   }
 
   private void setupListeners() {
@@ -107,8 +101,22 @@ public class FeedFragment extends Fragment {
     });
   }
 
-  private void queryFeedStories(final double latMax, final double latMin, final double lonMax,
-                                final double lonMin) {
+  private void queryFeedStories() {
+    location = LocationHelper.getInstance().getLocation(context);
+    if (location == null) {
+      Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    double lat = location.getLatitude();
+    double lon = location.getLongitude();
+    double earthRadius = 6371;  // earth radius in km
+    double radius = 100; // km
+    final double longMin = lon - Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
+    final double longMax = lon + Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
+    final double latMax = lat + Math.toDegrees(radius / earthRadius);
+    final double latMin = lat - Math.toDegrees(radius / earthRadius);
+
     // Query Likes
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
     query.whereEqualTo("user", ParseUser.getCurrentUser());
@@ -119,7 +127,7 @@ public class FeedFragment extends Fragment {
         for (ParseObject obj : parseObjects) {
           feedLikes.add(obj.getString("adventureId"));
         }
-        queryAdventures(feedLikes, latMax, latMin, lonMax, lonMin);
+        queryAdventures(feedLikes, latMax, latMin, longMax, longMin);
       }
     });
   }
@@ -142,6 +150,8 @@ public class FeedFragment extends Fragment {
           return;
         }
 
+        feedList.clear();
+
         for (ParseObject adventure : parseObjects) {
           ParseObject author = adventure.getParseObject("author");
           Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
@@ -154,6 +164,7 @@ public class FeedFragment extends Fragment {
         }
 
         listAdapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(false);
       }
 
     });

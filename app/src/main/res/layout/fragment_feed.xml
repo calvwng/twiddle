@@ -5,14 +5,22 @@
              android:layout_height="match_parent"
              tools:context="com.cpe409.twiddle.fragments.FeedFragment">
 
-    <ListView
-        android:id="@+id/feedListView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/feed_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null"
         android:layout_margin="8dp"
-        android:scrollbars="none">
-    </ListView>
+        android:layout_marginBottom="12dp">
+
+        <ListView
+            android:id="@+id/feedListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:scrollbars="none">
+        </ListView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"
@@ -23,6 +31,6 @@
         android:src="@drawable/ic_action_content_create"
         fab:fab_colorNormal="@color/accent"
         fab:fab_colorPressed="@color/accent_pressed"
-        fab:fab_colorRipple="@color/primary" />
+        fab:fab_colorRipple="@color/primary"/>
 
 </FrameLayout>
