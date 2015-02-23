@@ -10,13 +10,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.SaveCallback;
+
+import java.io.ByteArrayOutputStream;
 
 public class AddImageActivity extends ActionBarActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView pictureImageView;
     View rootView;
+    private ParseFile photoFile;
 
 
     @Override
@@ -60,8 +67,19 @@ public class AddImageActivity extends ActionBarActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             this.pictureImageView.setImageBitmap(imageBitmap);
+            this.pictureImageView.setVisibility(View.VISIBLE);
+            this.pictureImageView.invalidate();
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+            final byte[] scaledData = bos.toByteArray();
+            data.putExtra("image", scaledData);
+            // Save the scaled image to Parse
         }
     }
+
+
+
 
     private void takePicture() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

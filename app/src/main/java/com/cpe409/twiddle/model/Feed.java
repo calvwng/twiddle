@@ -1,5 +1,10 @@
 package com.cpe409.twiddle.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.text.DecimalFormat;
@@ -16,6 +21,7 @@ public class Feed {
   private FacebookUser author;
   private boolean liked;
   private String distance;
+  private byte[] imageData;
 
   public Feed() {
 
@@ -70,6 +76,23 @@ public class Feed {
 
   public void setLiked(Boolean liked) {
     this.liked = liked;
+  }
+
+  public void setImage(final ParseFile file) {
+
+      if (file == null) {
+          return;
+      }
+
+      try {
+          this.imageData = file.getData();
+      } catch (ParseException e) {
+          e.printStackTrace();
+      }
+  }
+
+  public byte[] getImageData() {
+      return this.imageData;
   }
 
   public String getDistance() {

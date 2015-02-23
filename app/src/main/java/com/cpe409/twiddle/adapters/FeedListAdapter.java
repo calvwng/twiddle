@@ -30,6 +30,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -97,10 +100,26 @@ public class FeedListAdapter extends BaseAdapter {
     holder.authorName.setText(feed.getAuthor().getName());
     holder.feedTitle.setText(feed.getTitle());
     holder.feedDistance.setText(feed.getDistance() + " Mi");
-    String imgUrl = feed.getImgUrl();
-    if (imgUrl != null) {
-      Picasso.with(context).load(imgUrl).into(holder.feedPicture);
+    if (feed.getImageData() != null && feed.getImageData().length != 0) {
+        try {
+            File file = new File(context.getCacheDir(), "image.png");
+            file.createNewFile();
+
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(feed.getImageData());
+            Picasso.with(context).load(file).into(holder.feedPicture);
+        }
+        catch (Exception e) {
+
+        }
     }
+    else {
+      String imgUrl = feed.getImgUrl();
+      if (imgUrl != null) {
+        Picasso.with(context).load(imgUrl).into(holder.feedPicture);
+      }
+    }
+
 
 
     holder.likeButton.setOnClickListener(new View.OnClickListener() {

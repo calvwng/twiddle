@@ -169,6 +169,7 @@ public class FeedFragment extends Fragment {
           feedLocation.setLongitude(adventure.getDouble("locationLongitude"));
           feed.setDistance(feedLocation.distanceTo(location) * MetersToMiles);
           feed.setLiked(feedLikes.contains(feed.getObjId()));
+          feed.setImage(adventure.getParseFile("image"));
           feedList.add(feed);
         }
 
