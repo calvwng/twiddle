@@ -30,7 +30,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -50,9 +49,16 @@ public class FeedListAdapter extends BaseAdapter {
   private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
   private static final String TAG = FeedListAdapter.class.getSimpleName();
 
+  private OnFeedItemClickListener onFeedItemClickListener;
+
+
   public FeedListAdapter(Context context, List<Feed> feedList) {
     this.context = context;
     this.feedList = feedList;
+  }
+
+  public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
+    this.onFeedItemClickListener = onFeedItemClickListener;
   }
 
   @Override
@@ -88,7 +94,9 @@ public class FeedListAdapter extends BaseAdapter {
       holder.feedLike = (ImageView) view.findViewById(R.id.feedLike);
       holder.likeButton = (ImageButton) view.findViewById(R.id.btnLike);
       holder.commentsButton = (ImageButton) view.findViewById(R.id.btnComments);
+      holder.commentsButton.setTag(position);
       holder.moreButton = (ImageButton) view.findViewById(R.id.btnMore);
+      holder.moreButton.setTag(position);
       holder.likesCount = (TextSwitcher) view.findViewById(R.id.likesCounter);
       view.setTag(holder);
     } else {
@@ -101,25 +109,22 @@ public class FeedListAdapter extends BaseAdapter {
     holder.feedTitle.setText(feed.getTitle());
     holder.feedDistance.setText(feed.getDistance() + " Mi");
     if (feed.getImageData() != null && feed.getImageData().length != 0) {
-        try {
-            File file = new File(context.getCacheDir(), "image.png");
-            file.createNewFile();
+      try {
+        File file = new File(context.getCacheDir(), "image.png");
+        file.createNewFile();
 
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(feed.getImageData());
-            Picasso.with(context).load(file).into(holder.feedPicture);
-        }
-        catch (Exception e) {
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(feed.getImageData());
+        Picasso.with(context).load(file).into(holder.feedPicture);
+      } catch (Exception e) {
 
-        }
-    }
-    else {
+      }
+    } else {
       String imgUrl = feed.getImgUrl();
       if (imgUrl != null) {
         Picasso.with(context).load(imgUrl).into(holder.feedPicture);
       }
     }
-
 
 
     holder.likeButton.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +152,24 @@ public class FeedListAdapter extends BaseAdapter {
           feed.setLiked(false);
           holder.likesCount.setCurrentText(feed.getLikesCount() + " likes");
           holder.likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
+        }
+      }
+    });
+
+    holder.moreButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (onFeedItemClickListener != null) {
+          onFeedItemClickListener.onCommentsClick(v, (Integer) v.getTag());
+        }
+      }
+    });
+
+    holder.commentsButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (onFeedItemClickListener != null) {
+          onFeedItemClickListener.onCommentsClick(v, (Integer) v.getTag());
         }
       }
     });
@@ -250,7 +273,7 @@ public class FeedListAdapter extends BaseAdapter {
   }
 
   //TODO: Create cloud code that handles these two queries into one query.
-  private void likeFeed(Feed feed){
+  private void likeFeed(Feed feed) {
     ParseObject like = new ParseObject("Like");
     like.put("user", ParseUser.getCurrentUser());
     like.put("adventureId", feed.getObjId());
@@ -288,6 +311,12 @@ public class FeedListAdapter extends BaseAdapter {
         parseObject.saveInBackground();
       }
     });
+  }
+
+  public interface OnFeedItemClickListener {
+    public void onCommentsClick(View v, int position);
+
+    public void onMoreClick(View v, int position);
   }
 
   static class ViewHolder {

@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,8 +21,10 @@ import com.cpe409.twiddle.activities.CreateActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.model.Feed;
+import com.cpe409.twiddle.shared.FeedContextMenuManager;
 import com.cpe409.twiddle.shared.LocationHelper;
 import com.cpe409.twiddle.shared.UtilHelper;
+import com.cpe409.twiddle.views.FeedContextMenu;
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -38,7 +42,8 @@ import java.util.Set;
  * Use the {@link FeedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
+    FeedContextMenu.OnFeedContextMenuItemClickListener {
 
   private ListView listView;
   private FeedListAdapter listAdapter;
@@ -49,6 +54,7 @@ public class FeedFragment extends Fragment {
   private FloatingActionButton floatingActionButton;
   private SwipeRefreshLayout refreshLayout;
   private static final float MetersToMiles = 0.000621371f;
+  private static final String TAG = FeedFragment.class.getSimpleName();
 
   /**
    * Use this factory method to create a new instance of
@@ -75,7 +81,20 @@ public class FeedFragment extends Fragment {
 
     feedList = new ArrayList<>();
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
+    listAdapter.setOnFeedItemClickListener(this);
     listView.setAdapter(listAdapter);
+    listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        FeedContextMenuManager.getInstance().onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+      }
+    });
+
     refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override
       public void onRefresh() {
@@ -112,6 +131,7 @@ public class FeedFragment extends Fragment {
   }
 
   private void queryFeedStories() {
+    Log.d(TAG, "Querying Feed Stories.");
     location = LocationHelper.getInstance().getLocation(context);
     if (location == null) {
       refreshLayout.setRefreshing(false);
@@ -151,7 +171,7 @@ public class FeedFragment extends Fragment {
 
 
   private void queryAdventures(final Set<String> feedLikes, final double latMax, final double latMin, final double lonMax,
-                                final double lonMin) {
+                               final double lonMin) {
     ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
     query.whereGreaterThan("locationLatitude", latMin);
     query.whereGreaterThan("locationLongitude", lonMin);
@@ -211,4 +231,35 @@ public class FeedFragment extends Fragment {
     context = null;
   }
 
+  @Override
+  public void onReportClick(int feedItem) {
+    FeedContextMenuManager.getInstance().hideContextMenu();
+  }
+
+  @Override
+  public void onShareClick(int feedItem) {
+    FeedContextMenuManager.getInstance().hideContextMenu();
+  }
+
+  @Override
+  public void onCancelClick(int feedItem) {
+    FeedContextMenuManager.getInstance().hideContextMenu();
+  }
+
+  @Override
+  public void onFavoritesClick(int feedItem) {
+    FeedContextMenuManager.getInstance().hideContextMenu();
+  }
+
+  @Override
+  public void onCommentsClick(View v, int position) {
+    //TODO
+    return;
+  }
+
+  @Override
+  public void onMoreClick(View v, int position) {
+    Log.d(TAG, "More clicked");
+    FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this);
+  }
 }
