@@ -1,4 +1,4 @@
-package com.cpe409.twiddle.activities;
+package com.cpe409.twiddle.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.activities.AddImageActivity;
+import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.model.Location;
 import com.parse.ParseException;
 import com.parse.ParseFile;

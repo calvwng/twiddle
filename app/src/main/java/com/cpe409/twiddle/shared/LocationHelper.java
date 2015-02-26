@@ -1,10 +1,15 @@
 package com.cpe409.twiddle.shared;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -61,5 +66,25 @@ public class LocationHelper {
     }
 
     return bestLocation;
+  }
+
+  public Address getAddress(Context context, LatLng latLng) {
+    Geocoder geocoder = new Geocoder(context);
+    Address address = null;
+
+    try {
+      address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return address;
+  }
+
+  public LatLng getCoordinateFromAddress(Context context, String locationAddress) throws IOException {
+    Geocoder geocoder = new Geocoder(context);
+    Address address = geocoder.getFromLocationName(locationAddress, 1).get(0);
+
+    return new LatLng(address.getLatitude(), address.getLongitude());
   }
 }
