@@ -202,6 +202,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
           feedList.add(feed);
         }
 
+        // Test Data
         listAdapter.notifyDataSetChanged();
         refreshLayout.setRefreshing(false);
       }
@@ -235,6 +236,8 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   public void onReportClick(int feedItem) {
     FeedContextMenuManager.getInstance().hideContextMenu();
   }
+
+
 
   @Override
   public void onShareClick(int feedItem) {

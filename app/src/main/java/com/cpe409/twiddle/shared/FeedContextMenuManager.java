@@ -75,7 +75,7 @@ public class FeedContextMenuManager implements View.OnAttachStateChangeListener,
     openingView.getLocationOnScreen(openingViewLocation);
     int additionalBottomMargin = UtilHelper.dpToPx(16);
     contextMenuView.setTranslationX(openingViewLocation[0] - contextMenuView.getWidth() / 3);
-    contextMenuView.setTranslationY(openingViewLocation[1] - contextMenuView.getHeight() - additionalBottomMargin);
+    contextMenuView.setTranslationY(openingViewLocation[1] - contextMenuView.getHeight() + additionalBottomMargin);
   }
 
   /**
