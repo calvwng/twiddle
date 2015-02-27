@@ -160,7 +160,7 @@ public class FeedListAdapter extends BaseAdapter {
       @Override
       public void onClick(View v) {
         if (onFeedItemClickListener != null) {
-          onFeedItemClickListener.onCommentsClick(v, (Integer) v.getTag());
+          onFeedItemClickListener.onMoreClick(v, (Integer) v.getTag());
         }
       }
     });
