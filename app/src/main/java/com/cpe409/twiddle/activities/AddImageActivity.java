@@ -96,7 +96,7 @@ public class AddImageActivity extends ActionBarActivity {
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-            scaledData = bos.toByteArray();
+            this.scaledData = bos.toByteArray();
         }
     }
 

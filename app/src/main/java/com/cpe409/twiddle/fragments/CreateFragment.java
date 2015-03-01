@@ -68,7 +68,7 @@ public class CreateFragment extends Fragment {
     switch (menuItem.getItemId()) {
       case R.id.action_create:
         this.checkInputAndSave();
-        return true;
+
       default:
         return super.onOptionsItemSelected(menuItem);
     }
@@ -123,7 +123,7 @@ public class CreateFragment extends Fragment {
     final String title = this.editTextTitle_.getText().toString();
     final String description = this.editTextDescription_.getText().toString();
     final Location location = (Location) this.textViewLocation.getTag();
-    final ParseFile photoFile = imageData != null ? new ParseFile("image.png", this.imageData) : null;
+    final ParseFile photoFile = this.imageData != null ? new ParseFile("image.png", this.imageData) : null;
 
 
     if (!title.isEmpty() && location != null && ParseUser.getCurrentUser() != null) {
@@ -138,6 +138,7 @@ public class CreateFragment extends Fragment {
 
     adventureObject.put("adventureTitle", title);
     adventureObject.put("adventureDescription", description);
+    adventureObject.put("likes", 0);
     adventureObject.put("locationLatitude", location.latitude);
     adventureObject.put("locationLongitude", location.longitude);
     adventureObject.put("locationAddress", location.strAddress);
