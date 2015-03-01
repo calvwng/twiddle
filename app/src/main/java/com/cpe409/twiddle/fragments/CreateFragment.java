@@ -123,7 +123,8 @@ public class CreateFragment extends Fragment {
     final String title = this.editTextTitle_.getText().toString();
     final String description = this.editTextDescription_.getText().toString();
     final Location location = (Location) this.textViewLocation.getTag();
-    final ParseFile photoFile = new ParseFile("image.png", this.imageData);
+    final ParseFile photoFile = imageData != null ? new ParseFile("image.png", this.imageData) : null;
+
 
     if (!title.isEmpty() && location != null && ParseUser.getCurrentUser() != null) {
       saveObject(title, description, location, photoFile);

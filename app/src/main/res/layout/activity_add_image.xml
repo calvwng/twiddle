@@ -4,6 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:id="@+id/activity_add_image_layout"
     tools:context="com.cpe409.twiddle.activities.AddImageActivity">
 
     <ImageView
@@ -11,7 +12,30 @@
         android:layout_width="500px"
         android:layout_height="500px"
         android:layout_gravity="center"
-        android:layout_alignParentTop="false" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="47dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_add_image_submit"
+        android:id="@+id/submit_image_button"
+        android:layout_below="@+id/pictureImageView"
+        android:layout_alignLeft="@+id/pictureImageView"
+        android:layout_alignStart="@+id/pictureImageView"
+        android:layout_marginTop="52dp"
+        android:layout_toLeftOf="@+id/cancel_image_button"
+        android:layout_toStartOf="@+id/cancel_image_button" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_add_image_cancel"
+        android:id="@+id/cancel_image_button"
+        android:layout_alignTop="@+id/submit_image_button"
+        android:layout_alignRight="@+id/pictureImageView"
+        android:layout_alignEnd="@+id/pictureImageView" />
 
 
 </RelativeLayout>
