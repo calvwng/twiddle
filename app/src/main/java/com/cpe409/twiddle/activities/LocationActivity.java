@@ -4,8 +4,6 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -15,6 +13,7 @@ import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.model.Location;
+import com.cpe409.twiddle.shared.LocationHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -70,7 +69,7 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
       String locationAddress = intent.getStringExtra(SearchManager.QUERY);
 
       try {
-        LatLng latLng = this.getCoordinateFromAddress(locationAddress);
+        LatLng latLng = LocationHelper.getInstance().getCoordinateFromAddress(this, locationAddress);
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
       } catch (IOException | IndexOutOfBoundsException e) {
         Toast.makeText(this, "Location not found", Toast.LENGTH_SHORT).show();
@@ -91,7 +90,7 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
   private void sendLocation() {
     if (this.googleMap != null) {
       LatLng latLng = this.googleMap.getCameraPosition().target;
-      Location location = new Location(latLng, getAddress(latLng));
+      Location location = new Location(latLng, LocationHelper.getInstance().getAddress(this, latLng));
 
       Intent resultIntent = new Intent();
       resultIntent.putExtra(EXTRA_LOCATION, location);
@@ -101,23 +100,5 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
     }
   }
 
-  private Address getAddress(LatLng latLng) {
-    Geocoder geocoder = new Geocoder(this);
-    Address address = null;
 
-    try {
-      address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return address;
-  }
-
-  private LatLng getCoordinateFromAddress(String locationAddress) throws IOException {
-    Geocoder geocoder = new Geocoder(this);
-    Address address = geocoder.getFromLocationName(locationAddress, 1).get(0);
-
-    return new LatLng(address.getLatitude(), address.getLongitude());
-  }
 }

@@ -1,4 +1,4 @@
-package com.cpe409.twiddle.activities;
+package com.cpe409.twiddle.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,8 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.activities.AddImageActivity;
+import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.model.Location;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -33,6 +36,7 @@ public class CreateFragment extends Fragment {
   private TextView textViewLocation;
   private TextView textViewImage;
   private ProgressDialog pDialogMap;
+  private byte[] imageData;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +68,7 @@ public class CreateFragment extends Fragment {
     switch (menuItem.getItemId()) {
       case R.id.action_create:
         this.checkInputAndSave();
-        return true;
+
       default:
         return super.onOptionsItemSelected(menuItem);
     }
@@ -79,6 +83,8 @@ public class CreateFragment extends Fragment {
     } else if (requestCode == ADD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
         /* TODO: Make it image in future */
         this.textViewImage.setText("Image Selected!");
+        this.imageData = data.getByteArrayExtra("image");
+
     }
   }
 
@@ -114,25 +120,29 @@ public class CreateFragment extends Fragment {
   }
 
   private void checkInputAndSave() {
-    String title = this.editTextTitle_.getText().toString();
-    String description = this.editTextDescription_.getText().toString();
-    Location location = (Location) this.textViewLocation.getTag();
+    final String title = this.editTextTitle_.getText().toString();
+    final String description = this.editTextDescription_.getText().toString();
+    final Location location = (Location) this.textViewLocation.getTag();
+    final ParseFile photoFile = this.imageData != null ? new ParseFile("image.png", this.imageData) : null;
+
 
     if (!title.isEmpty() && location != null && ParseUser.getCurrentUser() != null) {
-      saveObject(title, description, location);
+      saveObject(title, description, location, photoFile);
     } else {
-      Toast.makeText(getActivity(), "Don't left anything blank!", Toast.LENGTH_SHORT).show();
+      Toast.makeText(getActivity(), "Don't leave anything blank!", Toast.LENGTH_SHORT).show();
     }
   }
 
-  private void saveObject(String title, String description, Location location) {
+  private void saveObject(String title, String description, Location location, ParseFile image) {
     ParseObject adventureObject = new ParseObject("Adventure");
 
     adventureObject.put("adventureTitle", title);
     adventureObject.put("adventureDescription", description);
+    adventureObject.put("likes", 0);
     adventureObject.put("locationLatitude", location.latitude);
     adventureObject.put("locationLongitude", location.longitude);
     adventureObject.put("locationAddress", location.strAddress);
+    adventureObject.put("image", image);
     adventureObject.put("author", ParseUser.getCurrentUser());
 
 

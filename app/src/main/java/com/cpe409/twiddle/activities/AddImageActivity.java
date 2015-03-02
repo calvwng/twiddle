@@ -9,23 +9,54 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.SaveCallback;
+
+import java.io.ByteArrayOutputStream;
 
 public class AddImageActivity extends ActionBarActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    public final static String IMAGE = "image";
+    private byte[] scaledData;
+
     ImageView pictureImageView;
     View rootView;
+    private ParseFile photoFile;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_image);
-        rootView = findViewById(R.id.pictureImageView);
+        rootView = this.findViewById(R.id.activity_add_image_layout);
         this.pictureImageView = (ImageView) this.rootView.findViewById(R.id.pictureImageView);
-        setContentView(R.layout.activity_add_image);
+        final Button submitButton = (Button) findViewById(R.id.submit_image_button);
+        final Button cancelButton = (Button) findViewById(R.id.cancel_image_button);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(IMAGE, scaledData);
+
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED);
+                finish();
+
+            }
+        });
+
     }
 
 
@@ -60,8 +91,17 @@ public class AddImageActivity extends ActionBarActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             this.pictureImageView.setImageBitmap(imageBitmap);
+            this.pictureImageView.setVisibility(View.VISIBLE);
+            this.pictureImageView.invalidate();
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+            this.scaledData = bos.toByteArray();
         }
     }
+
+
+
 
     private void takePicture() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
