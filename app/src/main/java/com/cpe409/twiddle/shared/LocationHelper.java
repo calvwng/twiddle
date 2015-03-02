@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 
 
+import com.cpe409.twiddle.BuildConfig;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
@@ -26,6 +27,13 @@ public class LocationHelper {
   }
 
   public Location getLocation(Context context) {
+    if (BuildConfig.DEBUG) {
+      Location location = new Location("location");
+      location.setLatitude(35.281172);
+      location.setLongitude(-120.660257);
+      return location;
+    }
+
     LocationManager locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     float bestAccuracy = 0;
     long bestTime = 0;
