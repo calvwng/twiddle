@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.fragments.FavoritesFragment;
 import com.cpe409.twiddle.fragments.FeedFragment;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.facebook.AppEventsLogger;
 import com.facebook.Session;
-import com.parse.Parse;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -85,7 +85,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
 
     MaterialSection browseSection = this.newSection("Adventures", FeedFragment.newInstance()); // TODO: set drawable & fragment
-    MaterialSection favoritesSection = this.newSection("Favorites", new Fragment()); // TODO: set drawable & fragment
+    MaterialSection favoritesSection = this.newSection("Favorites", new FavoritesFragment().newInstance()); // TODO: set drawable & fragment
     MaterialSection settingsSection = this.newSection("Settings", new Fragment()); // TODO: set drawable & fragment
     MaterialSection logoutSection = this.newSection("Logout", R.drawable.ic_action_exit_to_app, new Fragment()); // TODO: set drawable & fragment
     logoutSection.setOnClickListener(new MaterialSectionListener() {

@@ -46,11 +46,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FeedFragment#newInstance} factory method to
+ * A simple {@link android.support.v4.app.Fragment} subclass.
+ * Use the {@link com.cpe409.twiddle.fragments.FavoritesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
+public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
     FeedContextMenu.OnFeedContextMenuItemClickListener {
 
   private Set<String> feedLikes;
@@ -62,13 +62,13 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   private List<Feed> feedList;
   private Context context;
   private Location location;
-  private FloatingActionButton floatingActionButton;
   private SwipeRefreshLayout refreshLayout;
+  private FloatingActionButton floatingActionButton;
   private String searchQuery;
 
   public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
   private static final float MetersToMiles = 0.000621371f;
-  private static final String TAG = FeedFragment.class.getSimpleName();
+  private static final String TAG = FavoritesFragment.class.getSimpleName();
 
   /**
    * Use this factory method tMaterialNavigationDrawero create a new instance of
@@ -76,18 +76,18 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
    *
    * @return A new instance of fragment FeedFragment.
    */
-  public static FeedFragment newInstance() {
+  public static FavoritesFragment newInstance() {
     Bundle args = new Bundle();
     return newInstance(args);
   }
 
-  public static FeedFragment newInstance(Bundle args) {
-    FeedFragment fragment = new FeedFragment();
+  public static FavoritesFragment newInstance(Bundle args) {
+    FavoritesFragment fragment = new FavoritesFragment();
     fragment.setArguments(args);
     return fragment;
   }
 
-  public FeedFragment() {
+  public FavoritesFragment() {
     // Required empty public constructor
   }
 
@@ -98,6 +98,8 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     setupReferences();
     setupListeners();
     checkUserAccess();
+
+    floatingActionButton.setVisibility(View.GONE);
 
     Bundle args = getArguments();
     searchQuery = args.getString(SEARCH_QUERY_ARG, "");
@@ -141,7 +143,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
   private void setupReferences() {
     listView = (ListView) activity.findViewById(R.id.feedListView);
-    floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
     refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
   }
 
@@ -157,7 +158,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
   private void checkUserAccess() {
     int visibility = CurrentUser.getInstance().isLoggedIn() ? View.VISIBLE : View.INVISIBLE;
-    floatingActionButton.setVisibility(visibility);
   }
 
   /**
@@ -254,10 +254,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     final double latMin = lat - Math.toDegrees(radius / earthRadius);
 
     ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
-    query.whereGreaterThan("locationLatitude", latMin);
-    query.whereGreaterThan("locationLongitude", lonMin);
-    query.whereLessThan("locationLatitude", latMax);
-    query.whereLessThan("locationLongitude", lonMax);
+    query.whereContainedIn("objectId", new ArrayList<String>(feedFavorites));
     query.include("author");
 
     Log.d(TAG, "Querying favorites");

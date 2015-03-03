@@ -94,20 +94,21 @@ public class FeedListAdapter extends BaseAdapter {
       holder.feedLike = (ImageView) view.findViewById(R.id.feedLike);
       holder.likeButton = (ImageButton) view.findViewById(R.id.btnLike);
       holder.commentsButton = (ImageButton) view.findViewById(R.id.btnComments);
-      holder.commentsButton.setTag(position);
       holder.moreButton = (ImageButton) view.findViewById(R.id.btnMore);
-      holder.moreButton.setTag(position);
       holder.likesCount = (TextSwitcher) view.findViewById(R.id.likesCounter);
       view.setTag(holder);
     } else {
       holder = (ViewHolder) view.getTag();
     }
     Feed feed = feedList.get(position);
+    holder.commentsButton.setTag(feed);
+    holder.moreButton.setTag(feed);
     holder.feed = feed;
     Picasso.with(context).load(feed.getAuthor().getImageURL()).into(holder.authorImage);
     holder.authorName.setText(feed.getAuthor().getName());
     holder.feedTitle.setText(feed.getTitle());
     holder.feedDistance.setText(feed.getDistance() + " Mi");
+
     if (feed.getImageData() != null && feed.getImageData().length != 0) {
       try {
         File file = new File(context.getCacheDir(), "image.png");
@@ -160,7 +161,7 @@ public class FeedListAdapter extends BaseAdapter {
       @Override
       public void onClick(View v) {
         if (onFeedItemClickListener != null) {
-          onFeedItemClickListener.onMoreClick(v, (Integer) v.getTag());
+          onFeedItemClickListener.onMoreClick(v, (Feed) v.getTag());
         }
       }
     });
@@ -169,7 +170,7 @@ public class FeedListAdapter extends BaseAdapter {
       @Override
       public void onClick(View v) {
         if (onFeedItemClickListener != null) {
-          onFeedItemClickListener.onCommentsClick(v, (Integer) v.getTag());
+          onFeedItemClickListener.onCommentsClick(v, (Feed) v.getTag());
         }
       }
     });
@@ -321,9 +322,9 @@ public class FeedListAdapter extends BaseAdapter {
   }
 
   public interface OnFeedItemClickListener {
-    public void onCommentsClick(View v, int position);
+    public void onCommentsClick(View v, Feed feed);
 
-    public void onMoreClick(View v, int position);
+    public void onMoreClick(View v, Feed feed);
   }
 
   static class ViewHolder {
