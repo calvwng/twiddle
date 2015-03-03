@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.adapters.LoginPagerAdapter;
@@ -38,6 +39,7 @@ public class LoginActivity extends ActionBarActivity {
   private ProgressDialog pDialog_;
   private ViewPager viewPager_;
   private LoginButton loginButton_;
+  private Button guestButton;
   private static final String TAG = LoginActivity.TAG;
 
 
@@ -112,6 +114,13 @@ public class LoginActivity extends ActionBarActivity {
             });
       }
     });
+    guestButton = (Button) findViewById(R.id.guest_login);
+    guestButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        startMainActivity();
+      }
+    });
   }
 
   private void updateParseUserInfoInBackground() {
@@ -144,22 +153,6 @@ public class LoginActivity extends ActionBarActivity {
         }
       }
     }).executeAsync();
-  }
-
-  public void callFacebookLogout(Context context) {
-    Session session = Session.getActiveSession();
-    if (session != null) {
-
-      if (!session.isClosed()) {
-        session.closeAndClearTokenInformation();
-        // clear your preferences if saved
-      }
-    } else {
-      session = new Session(context);
-      Session.setActiveSession(session);
-      session.closeAndClearTokenInformation();
-      // clear your preferences if saved
-    }
   }
 
   public class FadePageTransfomer implements ViewPager.PageTransformer {

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.AddImageActivity;
 import com.cpe409.twiddle.activities.LocationActivity;
+import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.Location;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -126,7 +127,7 @@ public class CreateFragment extends Fragment {
     final ParseFile photoFile = this.imageData != null ? new ParseFile("image.png", this.imageData) : null;
 
 
-    if (!title.isEmpty() && location != null && ParseUser.getCurrentUser() != null) {
+    if (!title.isEmpty() && location != null && CurrentUser.getInstance().isLoggedIn()) {
       saveObject(title, description, location, photoFile);
     } else {
       Toast.makeText(getActivity(), "Don't leave anything blank!", Toast.LENGTH_SHORT).show();
@@ -154,6 +155,7 @@ public class CreateFragment extends Fragment {
       public void done(ParseException e) {
         pDialog_.dismiss();
         Toast.makeText(getActivity(), "Adventure saved with success!", Toast.LENGTH_SHORT).show();
+        getActivity().finish();
       }
     });
   }

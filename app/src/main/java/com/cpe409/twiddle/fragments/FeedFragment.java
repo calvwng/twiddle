@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.CreateActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
+import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.shared.FeedContextMenuManager;
@@ -90,6 +91,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     this.setHasOptionsMenu(true);
     setupReferences();
     setupListeners();
+    restrictAccess();
 
     feedList = new ArrayList<>();
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
@@ -141,6 +143,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
         startActivity(i);
       }
     });
+  }
+
+  private void restrictAccess() {
+    int visibility = CurrentUser.getInstance().isLoggedIn() ? View.VISIBLE : View.INVISIBLE;
+    floatingActionButton.setVisibility(visibility);
   }
 
   private void queryFeedStories(final String searchQuery) {

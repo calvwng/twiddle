@@ -12,23 +12,38 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"/>
 
-    <com.facebook.widget.LoginButton
-        android:id="@+id/login"
-        xmlns:fb="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
+        android:id="@+id/buttons_holder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="60dp"
         android:layout_marginTop="25dp"
-        android:text="    Log in with Facebook    "
-        fb:login_text="     Log in with Facebook    "/>
+        android:orientation="vertical">
+
+        <com.facebook.widget.LoginButton
+            android:id="@+id/login"
+            xmlns:fb="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="    Log in with Facebook    "
+            fb:login_text="     Log in with Facebook    "/>
+
+        <Button
+            android:id="@+id/guest_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Continue as a Guest"/>
+
+    </LinearLayout>
 
     <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/login_indicator"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/login"
+        android:layout_above="@id/buttons_holder"
         android:layout_marginLeft="75dip"
         android:layout_marginRight="75dip"
         android:padding="10dip"

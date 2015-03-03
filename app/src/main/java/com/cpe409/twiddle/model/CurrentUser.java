@@ -37,4 +37,8 @@ public class CurrentUser extends FacebookUser {
     return loggedIn;
   }
 
+  public void logout() {
+    this.instance = null;
+  }
+
 }

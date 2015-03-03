@@ -12,6 +12,7 @@ import com.cpe409.twiddle.fragments.FeedFragment;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.facebook.AppEventsLogger;
 import com.facebook.Session;
+import com.parse.Parse;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -53,6 +54,7 @@ public class MainActivity extends MaterialNavigationDrawer {
   }
 
   public void callFacebookLogout(Context context) {
+    CurrentUser.getInstance().logout();
     Session session = Session.getActiveSession();
     if (session != null) {
       if (!session.isClosed()) {
@@ -100,7 +102,11 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     this.addBottomSection(logoutSection);
     this.addSection(browseSection);
-    this.addSection(favoritesSection);
+
+    if (CurrentUser.getInstance().isLoggedIn()) {
+      this.addSection(favoritesSection);
+    }
+
     this.addSection(settingsSection);
     this.addAccount(account);
 

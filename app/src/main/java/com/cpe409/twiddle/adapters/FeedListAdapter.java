@@ -180,6 +180,11 @@ public class FeedListAdapter extends BaseAdapter {
       holder.likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
     }
 
+    int visibility = CurrentUser.getInstance().isLoggedIn() ? View.VISIBLE : View.INVISIBLE;
+    holder.likeButton.setVisibility(visibility);
+    holder.commentsButton.setVisibility(visibility);
+    holder.moreButton.setVisibility(visibility);
+
     holder.likesCount.setCurrentText(feed.getLikesCount() + " likes");
     return view;
   }
