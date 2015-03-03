@@ -203,6 +203,8 @@ public class FeedListAdapter extends BaseAdapter {
     ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.likeButton, "scaleY", 0.2f, 1f);
     bounceAnimY.setDuration(300);
     bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+
     bounceAnimY.addListener(new AnimatorListenerAdapter() {
       @Override
       public void onAnimationStart(Animator animation) {

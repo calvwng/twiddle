@@ -51,16 +51,20 @@ import java.util.Set;
 public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
     FeedContextMenu.OnFeedContextMenuItemClickListener {
 
-  public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
+  private Set<String> feedLikes;
+  private Set<String> feedFavorites;
+  private Activity activity;
 
   private ListView listView;
   private FeedListAdapter listAdapter;
   private List<Feed> feedList;
-  private Activity activity;
   private Context context;
   private Location location;
   private FloatingActionButton floatingActionButton;
   private SwipeRefreshLayout refreshLayout;
+  private String searchQuery;
+
+  public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
   private static final float MetersToMiles = 0.000621371f;
   private static final String TAG = FeedFragment.class.getSimpleName();
 
@@ -91,9 +95,15 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     this.setHasOptionsMenu(true);
     setupReferences();
     setupListeners();
-    restrictAccess();
+    checkUserAccess();
+
+    Bundle args = getArguments();
+    searchQuery = args.getString(SEARCH_QUERY_ARG, "");
 
     feedList = new ArrayList<>();
+    feedLikes = new HashSet<>();
+    feedFavorites = new HashSet<>();
+
     listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
     listAdapter.setOnFeedItemClickListener(this);
     listView.setAdapter(listAdapter);
@@ -109,13 +119,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       }
     });
 
-    Bundle args = getArguments();
-    final String searchQuery = args.getString(SEARCH_QUERY_ARG, "");
 
     refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override
       public void onRefresh() {
-        queryFeedStories(searchQuery);
+        queryFeedStories();
       }
     });
     new Handler().postDelayed(new Runnable() {
@@ -126,7 +134,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       }
     }, 500);
 
-    queryFeedStories(searchQuery);
+    queryFeedStories();
   }
 
   private void setupReferences() {
@@ -145,30 +153,29 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     });
   }
 
-  private void restrictAccess() {
+  private void checkUserAccess() {
     int visibility = CurrentUser.getInstance().isLoggedIn() ? View.VISIBLE : View.INVISIBLE;
     floatingActionButton.setVisibility(visibility);
   }
 
-  private void queryFeedStories(final String searchQuery) {
+  /**
+   * This starts the network queries. Goes in the order:
+   * likes -> favorites -> feeds
+   * TODO: Launch the likes and favorites asynchornously and then launch feed query when done.
+   */
+  private void queryFeedStories() {
     Log.d(TAG, "Querying Feed Stories.");
-    location = LocationHelper.getInstance().getLocation(context);
-    if (location == null) {
+    queryLikes();
+  }
+
+  private void queryLikes() {
+    if (!UtilHelper.isNetworkOnline(context)) {
+      UtilHelper.throwToastError(context, "No network connection.");
       refreshLayout.setRefreshing(false);
-      Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
       return;
     }
 
-    double lat = location.getLatitude();
-    double lon = location.getLongitude();
-    double earthRadius = 6371;  // earth radius in km
-    double radius = 100; // km
-    final double longMin = lon - Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
-    final double longMax = lon + Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
-    final double latMax = lat + Math.toDegrees(radius / earthRadius);
-    final double latMin = lat - Math.toDegrees(radius / earthRadius);
-
-    // Query Likes
+    Log.d(TAG, "Querying Likes");
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
     query.whereEqualTo("user", ParseUser.getCurrentUser());
     query.findInBackground(new FindCallback<ParseObject>() {
@@ -180,17 +187,70 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
           return;
         }
 
-        Set<String> feedLikes = new HashSet<>();
+        feedLikes.clear();
+        Log.d(TAG, "Found " + parseObjects.size() + " likes");
         for (ParseObject obj : parseObjects) {
           feedLikes.add(obj.getString("adventureId"));
         }
-        queryAdventures(searchQuery, feedLikes, latMax, latMin, longMax, longMin);
+
+        queryFavorites();
       }
     });
   }
 
-  private void queryAdventures(final String searchQuery, final Set<String> feedLikes, final double latMax, final double latMin, final double lonMax,
-                               final double lonMin) {
+  private void queryFavorites() {
+    if (!UtilHelper.isNetworkOnline(context)) {
+      UtilHelper.throwToastError(context, "No network connection.");
+      refreshLayout.setRefreshing(false);
+      return;
+    }
+
+    Log.d(TAG, "Querying favorites");
+    ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
+    query.whereEqualTo("user", ParseUser.getCurrentUser());
+    query.findInBackground(new FindCallback<ParseObject>() {
+      @Override
+      public void done(List<ParseObject> parseObjects, ParseException e) {
+        if (e != null) {
+          UtilHelper.throwToastError(context, e);
+          refreshLayout.setRefreshing(false);
+          return;
+        }
+
+        feedFavorites.clear();
+        Log.d(TAG, "Found " + parseObjects.size() + " favorites");
+        for (ParseObject obj : parseObjects) {
+          feedFavorites.add(obj.getString("adventureId"));
+        }
+
+        queryAdventures();
+      }
+    });
+  }
+
+  private void queryAdventures() {
+    if (!UtilHelper.isNetworkOnline(context)) {
+      UtilHelper.throwToastError(context, "No network connection.");
+      refreshLayout.setRefreshing(false);
+      return;
+    }
+
+    location = LocationHelper.getInstance().getLocation(context);
+    if (location == null) {
+      refreshLayout.setRefreshing(false);
+      Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    double lat = location.getLatitude();
+    double lon = location.getLongitude();
+    double earthRadius = 6371;  // earth radius in km
+    double radius = 100; // km
+    final double lonMin = lon - Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
+    final double lonMax = lon + Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
+    final double latMax = lat + Math.toDegrees(radius / earthRadius);
+    final double latMin = lat - Math.toDegrees(radius / earthRadius);
+
     ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
     query.whereGreaterThan("locationLatitude", latMin);
     query.whereGreaterThan("locationLongitude", lonMin);
@@ -198,6 +258,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     query.whereLessThan("locationLongitude", lonMax);
     query.include("author");
 
+    Log.d(TAG, "Querying favorites");
     query.findInBackground(new FindCallback<ParseObject>() {
       @Override
       public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -209,6 +270,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
         feedList.clear();
 
+        Log.d(TAG, "Found " + parseObjects.size() + " adventures");
         for (ParseObject adventure : parseObjects) {
           String adventureDescriptor = adventure.getString("adventureTitle");
           adventureDescriptor += " " + adventure.getString("adventureDescription");
@@ -221,16 +283,15 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
             feedLocation.setLongitude(adventure.getDouble("locationLongitude"));
             feed.setDistance(feedLocation.distanceTo(location) * MetersToMiles);
             feed.setLiked(feedLikes.contains(feed.getObjId()));
+            feed.setFavorited(feedFavorites.contains((feed.getObjId())));
             feed.setImage(adventure.getParseFile("image"));
             feedList.add(feed);
           }
         }
 
-        // Test Data
         listAdapter.notifyDataSetChanged();
         refreshLayout.setRefreshing(false);
       }
-
     });
   }
 
@@ -271,8 +332,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   public void onReportClick(int feedItem) {
     FeedContextMenuManager.getInstance().hideContextMenu();
   }
-
-
 
   @Override
   public void onShareClick(int feedItem) {

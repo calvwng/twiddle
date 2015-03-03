@@ -20,6 +20,7 @@ public class Feed {
   private int likesCount;
   private FacebookUser author;
   private boolean liked;
+  private boolean favorited;
   private String distance;
   private byte[] imageData;
 
@@ -43,6 +44,7 @@ public class Feed {
     feed.likesCount = adventure.getInt("likes");
     feed.author = author;
     feed.liked = false;
+    feed.favorited = false;
     return feed;
   }
 
@@ -78,18 +80,27 @@ public class Feed {
     this.liked = liked;
   }
 
-  public void setImage(final ParseFile file) {
-
-      if (file == null) {
-          return;
-      }
-
-      try {
-          this.imageData = file.getData();
-      } catch (ParseException e) {
-          e.printStackTrace();
-      }
+  public boolean isFavorited() {
+    return favorited;
   }
+
+  public void setFavorited(boolean favorited) {
+    this.favorited = favorited;
+  }
+
+  public void setImage(final ParseFile file) {
+    if (file == null) {
+      return;
+    }
+
+    try {
+      this.imageData = file.getData();
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+  }
+
+
 
   public byte[] getImageData() {
       return this.imageData;
