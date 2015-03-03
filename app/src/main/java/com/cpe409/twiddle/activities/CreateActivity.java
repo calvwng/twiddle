@@ -25,8 +25,9 @@ public class CreateActivity extends ActionBarActivity {
     switch (menuItem.getItemId()) {
       case android.R.id.home:
         onBackPressed();
+        return true;
+      default:
+        return super.onOptionsItemSelected(menuItem);
     }
-
-    return super.onOptionsItemSelected(menuItem);
   }
 }

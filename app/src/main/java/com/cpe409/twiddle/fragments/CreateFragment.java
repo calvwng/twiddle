@@ -69,7 +69,6 @@ public class CreateFragment extends Fragment {
     switch (menuItem.getItemId()) {
       case R.id.action_create:
         this.checkInputAndSave();
-
       default:
         return super.onOptionsItemSelected(menuItem);
     }

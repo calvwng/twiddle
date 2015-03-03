@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
+    <item android:id="@+id/action_peek"
+          android:title="@string/action_peek"
+          android:icon="@drawable/ic_peek"
+          app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_search"
           android:title="@string/action_search"
           android:icon="@drawable/ic_action_search"

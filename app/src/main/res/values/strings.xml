@@ -20,5 +20,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_add_image">Add Image</string>
     <string name="feed_search_hint">Search for Adventures</string>
+    <string name="action_peek">Peek at another city</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.cpe409.twiddle.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.CreateActivity;
+import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
@@ -52,9 +55,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     FeedContextMenu.OnFeedContextMenuItemClickListener {
 
   public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
+  public static final int SELECT_LOCATION_REQUEST = 1;
 
   private ListView listView;
   private FeedListAdapter listAdapter;
+  private ProgressDialog pDialogMap;
   private List<Feed> feedList;
   private Activity activity;
   private Context context;
@@ -254,6 +259,19 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   }
 
   @Override
+  public boolean onOptionsItemSelected(MenuItem menuItem) {
+    switch (menuItem.getItemId()) {
+      case R.id.action_peek:
+        Intent intent = new Intent(context, LocationActivity.class);
+        pDialogMap = ProgressDialog.show(getActivity(), "", "Opening map...", true);
+        startActivityForResult(intent, SELECT_LOCATION_REQUEST);
+        return true;
+      default:
+        return super.onOptionsItemSelected(menuItem);
+    }
+  }
+
+  @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.activity = activity;
@@ -265,6 +283,13 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     super.onDetach();
     activity = null;
     context = null;
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (pDialogMap != null) {
+      pDialogMap.dismiss();
+    }
   }
 
   @Override

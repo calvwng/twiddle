@@ -34,6 +34,7 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_location);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     MapFragment mapFragment = (MapFragment) this.getFragmentManager().findFragmentById(R.id.map);
     mapFragment.getMapAsync(this);
@@ -57,6 +58,9 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
     switch (menuItem.getItemId()) {
       case R.id.action_create:
         this.sendLocation();
+        return true;
+      case android.R.id.home:
+        onBackPressed();
         return true;
       default:
         return super.onOptionsItemSelected(menuItem);
