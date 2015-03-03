@@ -1,8 +1,5 @@
 package com.cpe409.twiddle.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;

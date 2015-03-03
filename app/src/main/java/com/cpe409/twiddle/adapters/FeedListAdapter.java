@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +32,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -110,16 +110,8 @@ public class FeedListAdapter extends BaseAdapter {
     holder.feedDistance.setText(feed.getDistance() + " Mi");
 
     if (feed.getImageData() != null && feed.getImageData().length != 0) {
-      try {
-        File file = new File(context.getCacheDir(), "image.png");
-        file.createNewFile();
-
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(feed.getImageData());
-        Picasso.with(context).load(file).into(holder.feedPicture);
-      } catch (Exception e) {
-
-      }
+      Bitmap bitmap = BitmapFactory.decodeByteArray(feed.getImageData(), 0, feed.getImageData().length);
+      holder.feedPicture.setImageBitmap(bitmap);
     } else {
       String imgUrl = feed.getImgUrl();
       if (imgUrl != null) {

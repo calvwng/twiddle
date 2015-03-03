@@ -143,6 +143,7 @@ public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFee
 
   private void setupReferences() {
     listView = (ListView) activity.findViewById(R.id.feedListView);
+    floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
     refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
   }
 
