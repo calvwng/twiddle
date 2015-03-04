@@ -84,7 +84,6 @@ public class MainActivity extends MaterialNavigationDrawer {
           R.drawable.ic_action_account_circle, R.drawable.bg_nav_drawer);
     }
 
-
     MaterialSection browseSection = this.newSection("Adventures", FeedFragment.newInstance()); // TODO: set drawable & fragment
     MaterialSection favoritesSection = this.newSection("Favorites", new FavoritesFragment().newInstance()); // TODO: set drawable & fragment
     MaterialSection profileSection = this.newSection("My Profile",

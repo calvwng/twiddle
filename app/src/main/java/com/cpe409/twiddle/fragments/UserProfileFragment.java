@@ -152,7 +152,7 @@ public class UserProfileFragment extends Fragment implements FeedListAdapter.OnF
       public void run() {
         refreshLayout.setRefreshing(true);
       }
-    }, 250);
+    }, 1);
 
     queryFeedStories(currentUserId);
   }
@@ -359,17 +359,6 @@ public class UserProfileFragment extends Fragment implements FeedListAdapter.OnF
     // Inflate profile view
     profileHeaderView = inflater.inflate(R.layout.view_user_profile_header, null);
     return view;
-  }
-
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-    menuInflater.inflate(R.menu.menu_feed, menu);
-
-    SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-    SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
-    SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
-    searchView.setSearchableInfo(searchableInfo);
   }
 
   @Override

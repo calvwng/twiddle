@@ -136,7 +136,7 @@ public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFee
       public void run() {
         refreshLayout.setRefreshing(true);
       }
-    }, 500);
+    }, 1);
 
     queryFeedStories();
   }

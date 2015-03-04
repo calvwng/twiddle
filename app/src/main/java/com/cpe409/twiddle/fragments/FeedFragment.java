@@ -134,7 +134,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       public void run() {
         refreshLayout.setRefreshing(true);
       }
-    }, 500);
+    }, 1);
 
     queryFeedStories();
   }
