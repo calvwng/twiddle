@@ -319,6 +319,7 @@ public class UserProfileFragment extends Fragment implements FeedListAdapter.OnF
         }
 
         feedList.clear();
+        karmaCount = 0;
 
         Log.d(TAG, "Found " + parseObjects.size() + " adventures");
         for (ParseObject adventure : parseObjects) {
