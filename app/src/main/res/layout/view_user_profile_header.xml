@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/vUserProfileRoot"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/colorPrimary"
+              android:orientation="vertical"
+              android:clipChildren="false"
+              android:clipToPadding="false"
+              android:padding="24dp">
+
+    <LinearLayout
+        android:clipChildren="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/userProfilePhoto"
+            android:layout_width="@dimen/user_profile_avatar_size"
+            android:layout_height="@dimen/user_profile_avatar_size"
+            android:layout_marginRight="16dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/user_profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:gravity="center_vertical"
+                android:textSize="24sp" />
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="\@jsmith"-->
+                <!--android:textSize="12sp"-->
+                <!--android:textColor="#bbbbbb" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textSize="12sp"-->
+                <!--android:text="Mobile development passionate."-->
+                <!--android:textColor="#ffffff" />-->
+
+            <!--<Button-->
+                <!--android:id="@+id/btnFollow"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:background="@drawable/btn_following"-->
+                <!--android:textColor="#ffffff"-->
+                <!--android:layout_height="24dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:layout_marginRight="24dp"-->
+                <!--android:textSize="12sp"-->
+                <!--android:text="following" />-->
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vUserStats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/profile_posts_karma"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#ffffff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="karma"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/profile_posts_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#ffffff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="posts"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/profile_posts_likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#ffffff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="likes"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
