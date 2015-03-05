@@ -6,9 +6,15 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
 import com.cpe409.twiddle.R;
-import com.cpe409.twiddle.fragments.CreateFragment;
+import com.cpe409.twiddle.fragments.UserProfileFragment;
 
-public class CreateActivity extends ActionBarActivity {
+/**
+ * Created by Michael on 3/4/2015.
+ */
+public class UserProfileActivity extends ActionBarActivity {
+
+  private String userId;
+  public static final String USER_ID = "userId";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -16,8 +22,12 @@ public class CreateActivity extends ActionBarActivity {
     setContentView(R.layout.activity_container);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+    userId = getIntent().getExtras().getString(USER_ID);
+    Bundle args = new Bundle();
+    args.putString(USER_ID, userId);
+
     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    transaction.replace(R.id.container, new CreateFragment()).commit();
+    transaction.replace(R.id.container, UserProfileFragment.newInstance(args)).commit();
   }
 
   @Override

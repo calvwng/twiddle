@@ -108,7 +108,7 @@ public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFee
     feedLikes = new HashSet<>();
     feedFavorites = new HashSet<>();
 
-    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
+    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList, false);
     listAdapter.setOnFeedItemClickListener(this);
     listView.setAdapter(listAdapter);
     listView.setOnScrollListener(new AbsListView.OnScrollListener() {

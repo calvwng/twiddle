@@ -1,8 +1,6 @@
 package com.cpe409.twiddle.fragments;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -10,11 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -26,7 +21,6 @@ import android.widget.Toast;
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.CreateActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
-import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.network.FavoriteFeed;
@@ -123,7 +117,7 @@ public class UserProfileFragment extends Fragment implements FeedListAdapter.OnF
     feedLikes = new HashSet<>();
     feedFavorites = new HashSet<>();
 
-    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
+    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList, true);
     listAdapter.setOnFeedItemClickListener(this);
     listView.addHeaderView(profileHeaderView);
     listView.setAdapter(listAdapter);
