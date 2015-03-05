@@ -46,6 +46,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -344,16 +346,29 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem menuItem) {
-    switch (menuItem.getItemId()) {
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
       case R.id.action_peek:
         Intent intent = new Intent(context, LocationActivity.class);
         pDialogMap = ProgressDialog.show(getActivity(), "", "Opening map...", true);
         startActivityForResult(intent, SELECT_LOCATION_REQUEST);
         return true;
-      default:
-        return super.onOptionsItemSelected(menuItem);
+      case R.id.action_filter_top:
+        Collections.sort(feedList, new Comparator<Feed>() {
+          @Override
+          public int compare(Feed lhs, Feed rhs) {
+            if (lhs.getLikesCount() < rhs.getLikesCount())
+              return 1;
+            else if (lhs.getLikesCount() > rhs.getLikesCount())
+              return -1;
+            else
+              return 0;
+          }
+        });
+        listAdapter.notifyDataSetChanged();
+        break;
     }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

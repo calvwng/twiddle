@@ -3,14 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
+<<<<<<< HEAD
     <item android:id="@+id/action_peek"
           android:title="@string/action_peek"
           android:icon="@drawable/ic_peek"
           app:showAsAction="ifRoom"/>
+=======
+    <item android:id="@+id/action_filter"
+          android:title="@string/action_search"
+          android:icon="@drawable/ic_action_content_sort"
+          app:showAsAction="always">
+        <menu >
+            <group android:id="@+id/group_filter">
+                <item android:id="@+id/action_filter_top" android:title="Top"></item>
+                <item android:id="@+id/action_filter_new" android:title="New"></item>
+                <item android:id="@+id/action_filter_distance" android:title="Distance"></item>
+            </group>
+        </menu>
+    </item>
+>>>>>>> Sort partial
 
     <item android:id="@+id/action_search"
           android:title="@string/action_search"
           android:icon="@drawable/ic_action_search"
           app:actionViewClass="android.support.v7.widget.SearchView"
           app:showAsAction="collapseActionView|ifRoom"/>
+
+
 </menu>
