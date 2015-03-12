@@ -94,7 +94,6 @@ public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFee
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    this.setHasOptionsMenu(true);
     setupReferences();
     setupListeners();
     checkUserAccess();
@@ -301,17 +300,6 @@ public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFee
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_feed, container, false);
-  }
-
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-    menuInflater.inflate(R.menu.menu_feed, menu);
-
-    SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-    SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
-    SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
-    searchView.setSearchableInfo(searchableInfo);
   }
 
   @Override
