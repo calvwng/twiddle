@@ -6,13 +6,13 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
-public class Location implements Serializable {
+public class AdventureLocation implements Serializable {
 
   public double latitude;
   public double longitude;
   public String strAddress;
 
-  public Location(LatLng latLng, Address address) {
+  public AdventureLocation(LatLng latLng, Address address) {
     this.latitude = latLng.latitude;
     this.longitude = latLng.longitude;
 

@@ -19,7 +19,7 @@ import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.AddImageActivity;
 import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.model.CurrentUser;
-import com.cpe409.twiddle.model.Location;
+import com.cpe409.twiddle.model.AdventureLocation;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -77,14 +77,13 @@ public class CreateFragment extends Fragment {
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == SELECT_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
-        Location location = (Location) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
-        this.textViewLocation.setText(location.strAddress);
-        this.textViewLocation.setTag(location);
+        AdventureLocation adventureLocation = (AdventureLocation) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
+        this.textViewLocation.setText(adventureLocation.strAddress);
+        this.textViewLocation.setTag(adventureLocation);
     } else if (requestCode == ADD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
         /* TODO: Make it image in future */
         this.textViewImage.setText("Image Selected!");
         this.imageData = data.getByteArrayExtra("image");
-
     }
   }
 
@@ -122,26 +121,26 @@ public class CreateFragment extends Fragment {
   private void checkInputAndSave() {
     final String title = this.editTextTitle_.getText().toString();
     final String description = this.editTextDescription_.getText().toString();
-    final Location location = (Location) this.textViewLocation.getTag();
+    final AdventureLocation adventureLocation = (AdventureLocation) this.textViewLocation.getTag();
     final ParseFile photoFile = this.imageData != null ? new ParseFile("image.png", this.imageData) : null;
 
 
-    if (!title.isEmpty() && location != null && CurrentUser.getInstance().isLoggedIn()) {
-      saveObject(title, description, location, photoFile);
+    if (!title.isEmpty() && adventureLocation != null && CurrentUser.getInstance().isLoggedIn()) {
+      saveObject(title, description, adventureLocation, photoFile);
     } else {
       Toast.makeText(getActivity(), "Don't leave anything blank!", Toast.LENGTH_SHORT).show();
     }
   }
 
-  private void saveObject(String title, String description, Location location, ParseFile image) {
+  private void saveObject(String title, String description, AdventureLocation adventureLocation, ParseFile image) {
     ParseObject adventureObject = new ParseObject("Adventure");
 
     adventureObject.put("adventureTitle", title);
     adventureObject.put("adventureDescription", description);
     adventureObject.put("likes", 0);
-    adventureObject.put("locationLatitude", location.latitude);
-    adventureObject.put("locationLongitude", location.longitude);
-    adventureObject.put("locationAddress", location.strAddress);
+    adventureObject.put("locationLatitude", adventureLocation.latitude);
+    adventureObject.put("locationLongitude", adventureLocation.longitude);
+    adventureObject.put("locationAddress", adventureLocation.strAddress);
     adventureObject.put("image", image);
     adventureObject.put("author", ParseUser.getCurrentUser());
 

@@ -9,8 +9,12 @@ import android.view.MenuItem;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.fragments.FeedFragment;
+import com.cpe409.twiddle.model.AdventureLocation;
+import com.cpe409.twiddle.model.Feed;
 
 public class FilteredFeedActivity extends ActionBarActivity {
+
+  private AdventureLocation peekLocation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +22,7 @@ public class FilteredFeedActivity extends ActionBarActivity {
     setContentView(R.layout.activity_filtered_feed);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+    peekLocation = (AdventureLocation) getIntent().getSerializableExtra(FeedFragment.LOCATION_ARG);
     handleIntent(getIntent());
   }
 
@@ -36,15 +41,28 @@ public class FilteredFeedActivity extends ActionBarActivity {
     handleIntent(intent);
   }
 
+  @Override
+  public void startActivity(Intent intent) {
+    super.startActivity(intent);
+
+    if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
+      intent.putExtra(FeedFragment.LOCATION_ARG, peekLocation);
+    }
+  }
+
   private void handleIntent(Intent intent) {
+    Bundle args = new Bundle();
+
     if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
       String searchQuery = intent.getStringExtra(SearchManager.QUERY);
-
-      Bundle args = new Bundle();
       args.putString(FeedFragment.SEARCH_QUERY_ARG, searchQuery);
-
-      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      transaction.replace(R.id.container, FeedFragment.newInstance(args)).commit();
+      args.putSerializable(FeedFragment.LOCATION_ARG, peekLocation);
+    } else if (intent.getAction().equals(FeedFragment.ACTION_PEEK)) {
+      peekLocation = (AdventureLocation) intent.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
+      args.putSerializable(FeedFragment.LOCATION_ARG, peekLocation);
     }
+
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.container, FeedFragment.newInstance(args)).commit();
   }
 }

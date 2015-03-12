@@ -25,8 +25,10 @@ import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.CreateActivity;
+import com.cpe409.twiddle.activities.FilteredFeedActivity;
 import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
+import com.cpe409.twiddle.model.AdventureLocation;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.model.Feed;
@@ -55,7 +57,9 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     FeedContextMenu.OnFeedContextMenuItemClickListener {
 
   public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
+  public static final String LOCATION_ARG = "LOCATION_ARG";
   public static final int SELECT_LOCATION_REQUEST = 1;
+  public static final String ACTION_PEEK = "SELECT_LOCATION_ACTION";
 
   private ListView listView;
   private FeedListAdapter listAdapter;
@@ -94,28 +98,33 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     this.setHasOptionsMenu(true);
-    setupReferences();
-    setupListeners();
-    restrictAccess();
-
-    feedList = new ArrayList<>();
-    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
-    listAdapter.setOnFeedItemClickListener(this);
-    listView.setAdapter(listAdapter);
-    listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-      @Override
-      public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-      }
-
-      @Override
-      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        FeedContextMenuManager.getInstance().onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-      }
-    });
 
     Bundle args = getArguments();
     final String searchQuery = args.getString(SEARCH_QUERY_ARG, "");
+    final AdventureLocation adventureLocation = (AdventureLocation) args.getSerializable(LOCATION_ARG);
+
+    setupReferences();
+    setupListeners(searchQuery);
+    setupListView();
+    restrictAccess();
+    setLocation(adventureLocation);
+    queryFeedStories(searchQuery);
+  }
+
+  private void setupReferences() {
+    listView = (ListView) activity.findViewById(R.id.feedListView);
+    floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
+    refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
+  }
+
+  private void setupListeners(final String searchQuery) {
+    floatingActionButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent i = new Intent(context, CreateActivity.class);
+        startActivity(i);
+      }
+    });
 
     refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override
@@ -131,21 +140,22 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       }
     }, 500);
 
-    queryFeedStories(searchQuery);
   }
 
-  private void setupReferences() {
-    listView = (ListView) activity.findViewById(R.id.feedListView);
-    floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
-    refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
-  }
-
-  private void setupListeners() {
-    floatingActionButton.setOnClickListener(new View.OnClickListener() {
+  private void setupListView() {
+    feedList = new ArrayList<>();
+    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList);
+    listAdapter.setOnFeedItemClickListener(this);
+    listView.setAdapter(listAdapter);
+    listView.setOnScrollListener(new AbsListView.OnScrollListener() {
       @Override
-      public void onClick(View v) {
-        Intent i = new Intent(context, CreateActivity.class);
-        startActivity(i);
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        FeedContextMenuManager.getInstance().onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
       }
     });
   }
@@ -155,10 +165,24 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     floatingActionButton.setVisibility(visibility);
   }
 
+  private void setLocation(final AdventureLocation peekLocation) {
+    if (peekLocation != null) {
+      // If no location is set and there is a peek location...
+      location = new Location("");
+      location.setLatitude(peekLocation.latitude);
+      location.setLongitude(peekLocation.longitude);
+      getActivity().getActionBar().setTitle("Peeking...");
+    } else {
+      // If no peek location was provided, get the current one
+      location = LocationHelper.getInstance().getLocation(context);
+    }
+  }
+
   private void queryFeedStories(final String searchQuery) {
     Log.d(TAG, "Querying Feed Stories.");
-    location = LocationHelper.getInstance().getLocation(context);
+
     if (location == null) {
+      // If the current location is not available
       refreshLayout.setRefreshing(false);
       Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
       return;
@@ -248,6 +272,35 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   }
 
   @Override
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    this.activity = activity;
+    this.context = activity.getApplicationContext();
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    activity = null;
+    context = null;
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (pDialogMap != null) {
+      pDialogMap.dismiss();
+    }
+
+    if (requestCode == SELECT_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
+      AdventureLocation location = (AdventureLocation) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
+      Intent intent = new Intent(context, FilteredFeedActivity.class);
+      intent.setAction(ACTION_PEEK);
+      intent.putExtra(LocationActivity.EXTRA_LOCATION, location);
+      startActivity(intent);
+    }
+  }
+
+  @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
     menuInflater.inflate(R.menu.menu_feed, menu);
 
@@ -271,33 +324,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     }
   }
 
-  @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    this.activity = activity;
-    this.context = activity.getApplicationContext();
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    activity = null;
-    context = null;
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (pDialogMap != null) {
-      pDialogMap.dismiss();
-    }
-  }
 
   @Override
   public void onReportClick(int feedItem) {
     FeedContextMenuManager.getInstance().hideContextMenu();
   }
-
-
 
   @Override
   public void onShareClick(int feedItem) {

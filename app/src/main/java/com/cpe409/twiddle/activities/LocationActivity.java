@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
-import com.cpe409.twiddle.model.Location;
+import com.cpe409.twiddle.model.AdventureLocation;
 import com.cpe409.twiddle.shared.LocationHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -94,15 +94,20 @@ public class LocationActivity extends ActionBarActivity implements OnMapReadyCal
   private void sendLocation() {
     if (this.googleMap != null) {
       LatLng latLng = this.googleMap.getCameraPosition().target;
-      Location location = new Location(latLng, LocationHelper.getInstance().getAddress(this, latLng));
+      AdventureLocation adventureLocation;
 
-      Intent resultIntent = new Intent();
-      resultIntent.putExtra(EXTRA_LOCATION, location);
+      try {
+        adventureLocation = new AdventureLocation(latLng, LocationHelper.getInstance().getAddress(this, latLng));
 
-      setResult(RESULT_OK, resultIntent);
-      finish();
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(EXTRA_LOCATION, adventureLocation);
+        setResult(RESULT_OK, resultIntent);
+        finish();
+      } catch (IOException | IndexOutOfBoundsException e) {
+        Toast.makeText(this, "Couldn't find location.", Toast.LENGTH_SHORT).show();
+        e.printStackTrace();
+      }
+
     }
   }
-
-
 }

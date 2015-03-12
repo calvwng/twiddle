@@ -76,15 +76,10 @@ public class LocationHelper {
     return bestLocation;
   }
 
-  public Address getAddress(Context context, LatLng latLng) {
+  public Address getAddress(Context context, LatLng latLng)
+        throws IOException, IndexOutOfBoundsException {
     Geocoder geocoder = new Geocoder(context);
-    Address address = null;
-
-    try {
-      address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    Address address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
 
     return address;
   }
