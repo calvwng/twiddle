@@ -1,9 +1,6 @@
 package com.cpe409.twiddle.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -11,39 +8,36 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.CreateActivity;
-import com.cpe409.twiddle.activities.FilteredFeedActivity;
-import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
-import com.cpe409.twiddle.model.AdventureLocation;
-import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.network.FavoriteFeed;
 import com.cpe409.twiddle.network.UnfavoriteFeed;
+import com.cpe409.twiddle.shared.CircleTransformation;
 import com.cpe409.twiddle.shared.FeedContextMenuManager;
 import com.cpe409.twiddle.shared.LocationHelper;
 import com.cpe409.twiddle.shared.UtilHelper;
 import com.cpe409.twiddle.views.FeedContextMenu;
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,34 +45,41 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FeedFragment#newInstance} factory method to
+ * A simple {@link android.support.v4.app.Fragment} subclass.
+ * Use the {@link com.cpe409.twiddle.fragments.UserProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
+public class UserProfileFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
     FeedContextMenu.OnFeedContextMenuItemClickListener {
 
   private Set<String> feedLikes;
   private Set<String> feedFavorites;
-  private Activity activity;
+  private List<Feed> feedList;
+  private Location location;
+  private int karmaCount;
+  private int postsCount;
+  private int likesCount;
+  private String currentUserId;
+  private ParseUser currentUser;
 
+  private Activity activity;
   private ListView listView;
   private FeedListAdapter listAdapter;
-  private ProgressDialog pDialogMap;
-  private List<Feed> feedList;
   private Context context;
-  private Location location;
   private FloatingActionButton floatingActionButton;
   private SwipeRefreshLayout refreshLayout;
-  private String searchQuery;
 
-  public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
-  public static final String LOCATION_ARG = "LOCATION_ARG";
-  public static final int SELECT_LOCATION_REQUEST = 1;
-  public static final String ACTION_PEEK = "SELECT_LOCATION_ACTION";
+  private View profileHeaderView;
+  private ImageView userProfilePhoto;
+  private TextView userProfileName;
+  private TextView karmaTextView;
+  private TextView postsTextView;
+  private TextView likesTextView;
+
+  private int AVATAR_SIZE;
+  private static final String USER_ID = "userId";
   private static final float MetersToMiles = 0.000621371f;
-  private static final String TAG = FeedFragment.class.getSimpleName();
-
+  private static final String TAG = UserProfileFragment.class.getSimpleName();
 
   /**
    * Use this factory method tMaterialNavigationDrawero create a new instance of
@@ -86,18 +87,19 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
    *
    * @return A new instance of fragment FeedFragment.
    */
-  public static FeedFragment newInstance() {
+  public static UserProfileFragment newInstance(String userId) {
     Bundle args = new Bundle();
+    args.putString(USER_ID, userId);
     return newInstance(args);
   }
 
-  public static FeedFragment newInstance(Bundle args) {
-    FeedFragment fragment = new FeedFragment();
+  public static UserProfileFragment newInstance(Bundle args) {
+    UserProfileFragment fragment = new UserProfileFragment();
     fragment.setArguments(args);
     return fragment;
   }
 
-  public FeedFragment() {
+  public UserProfileFragment() {
     // Required empty public constructor
   }
 
@@ -107,54 +109,17 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     this.setHasOptionsMenu(true);
     setupReferences();
     setupListeners();
-    checkUserAccess();
+    floatingActionButton.setVisibility(View.GONE);
+    AVATAR_SIZE = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
-    Bundle args = getArguments();
-    searchQuery = args.getString(SEARCH_QUERY_ARG, "");
-    final AdventureLocation peekLocation = (AdventureLocation) args.getSerializable(LOCATION_ARG);
-
+    currentUserId = this.getArguments().getString(USER_ID);
     feedList = new ArrayList<>();
     feedLikes = new HashSet<>();
     feedFavorites = new HashSet<>();
 
-    setupListView();
-    setLocation(peekLocation);
-    queryFeedStories();
-  }
-
-  private void setupReferences() {
-    listView = (ListView) activity.findViewById(R.id.feedListView);
-    floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
-    refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
-  }
-
-  private void setupListeners() {
-    floatingActionButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent i = new Intent(context, CreateActivity.class);
-        startActivity(i);
-      }
-    });
-
-    refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override
-      public void onRefresh() {
-        queryFeedStories();
-      }
-    });
-    new Handler().postDelayed(new Runnable() {
-
-      @Override
-      public void run() {
-        refreshLayout.setRefreshing(true);
-      }
-    }, 1);
-  }
-
-  private void setupListView() {
-    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList, false);
+    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList, true);
     listAdapter.setOnFeedItemClickListener(this);
+    listView.addHeaderView(profileHeaderView);
     listView.setAdapter(listAdapter);
     listView.setOnScrollListener(new AbsListView.OnScrollListener() {
       @Override
@@ -167,23 +132,45 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
         FeedContextMenuManager.getInstance().onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
       }
     });
+
+
+    refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        queryFeedStories(currentUserId);
+      }
+    });
+    new Handler().postDelayed(new Runnable() {
+
+      @Override
+      public void run() {
+        refreshLayout.setRefreshing(true);
+      }
+    }, 1);
+
+    queryFeedStories(currentUserId);
   }
 
-  private void setLocation(final AdventureLocation peekLocation) {
-    if (peekLocation != null) {
-      // If no location is set and there is a peek location...
-      location = new Location("");
-      location.setLatitude(peekLocation.latitude);
-      location.setLongitude(peekLocation.longitude);
-    } else {
-      // If no peek location was provided, get the current one
-      location = LocationHelper.getInstance().getLocation(context);
-    }
+  private void setupReferences() {
+    listView = (ListView) activity.findViewById(R.id.feedListView);
+    floatingActionButton = (FloatingActionButton) activity.findViewById(R.id.fab);
+    refreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.feed_refresh_layout);
+    userProfilePhoto = (ImageView) profileHeaderView.findViewById(R.id.userProfilePhoto);
+    userProfileName = (TextView) profileHeaderView.findViewById(R.id.user_profile_name);
+    karmaTextView = (TextView) profileHeaderView.findViewById(R.id.profile_posts_karma);
+    postsTextView = (TextView) profileHeaderView.findViewById(R.id.profile_posts_count);
+    likesTextView = (TextView) profileHeaderView.findViewById(R.id.profile_posts_likes);
+
   }
 
-  private void checkUserAccess() {
-    int visibility = CurrentUser.getInstance().isLoggedIn() ? View.VISIBLE : View.INVISIBLE;
-    floatingActionButton.setVisibility(visibility);
+  private void setupListeners() {
+    floatingActionButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent i = new Intent(context, CreateActivity.class);
+        startActivity(i);
+      }
+    });
   }
 
   /**
@@ -191,9 +178,39 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
    * likes -> favorites -> feeds
    * TODO: Launch the likes and favorites asynchornously and then launch feed query when done.
    */
-  private void queryFeedStories() {
+  private void queryFeedStories(String userId) {
     Log.d(TAG, "Querying Feed Stories.");
-    queryLikes();
+    queryUser(userId);
+  }
+
+  private void queryUser(String userId) {
+    if (!UtilHelper.isNetworkOnline(context)) {
+      UtilHelper.throwToastError(context, "No network connection.");
+      refreshLayout.setRefreshing(false);
+      return;
+    }
+
+    Log.d(TAG, "Querying user: " + userId);
+    ParseQuery<ParseUser> query = ParseUser.getQuery();
+    query.whereEqualTo("fbId", userId);
+    query.getFirstInBackground(new GetCallback<ParseUser>() {
+      @Override
+      public void done(ParseUser parseUser, ParseException e) {
+        if (e != null) {
+          UtilHelper.throwToastError(context, e);
+          refreshLayout.setRefreshing(false);
+          return;
+        }
+
+        currentUser = parseUser;
+        userProfileName.setText(currentUser.getString("fbName"));
+        Picasso.with(context).load(FacebookUser.fbIdtoPhotoUrl(currentUser.getString("fbId")))
+            .centerCrop().placeholder(R.drawable.ic_action_account_circle)
+            .resize(AVATAR_SIZE, AVATAR_SIZE).transform(new CircleTransformation()).
+            into(userProfilePhoto);
+        queryLikes();
+      }
+    });
   }
 
   private void queryLikes() {
@@ -205,7 +222,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
     Log.d(TAG, "Querying Likes");
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
-    query.whereEqualTo("user", ParseUser.getCurrentUser());
+    query.whereEqualTo("user", currentUser);
     query.findInBackground(new FindCallback<ParseObject>() {
       @Override
       public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -221,6 +238,8 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
           feedLikes.add(obj.getString("adventureId"));
         }
 
+        likesCount = parseObjects.size();
+
         queryFavorites();
       }
     });
@@ -235,7 +254,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
     Log.d(TAG, "Querying favorites");
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
-    query.whereEqualTo("user", ParseUser.getCurrentUser());
+    query.whereEqualTo("user", currentUser);
     query.findInBackground(new FindCallback<ParseObject>() {
       @Override
       public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -263,6 +282,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       return;
     }
 
+    location = LocationHelper.getInstance().getLocation(context);
     if (location == null) {
       refreshLayout.setRefreshing(false);
       Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
@@ -279,10 +299,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     final double latMin = lat - Math.toDegrees(radius / earthRadius);
 
     ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
-    query.whereGreaterThan("locationLatitude", latMin);
-    query.whereGreaterThan("locationLongitude", lonMin);
-    query.whereLessThan("locationLatitude", latMax);
-    query.whereLessThan("locationLongitude", lonMax);
+    query.whereEqualTo("author", currentUser);
     query.include("author");
 
     Log.d(TAG, "Querying favorites");
@@ -296,30 +313,35 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
         }
 
         feedList.clear();
+        karmaCount = 0;
 
         Log.d(TAG, "Found " + parseObjects.size() + " adventures");
         for (ParseObject adventure : parseObjects) {
-          String adventureDescriptor = adventure.getString("adventureTitle");
-          adventureDescriptor += " " + adventure.getString("adventureDescription");
-
-          if (adventureDescriptor.toLowerCase().contains(searchQuery.toLowerCase())) {
-            ParseObject author = adventure.getParseObject("author");
-            Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
-            Location feedLocation = new Location("");
-            feedLocation.setLatitude(adventure.getDouble("locationLatitude"));
-            feedLocation.setLongitude(adventure.getDouble("locationLongitude"));
-            feed.setDistance(feedLocation.distanceTo(location) * MetersToMiles);
-            feed.setLiked(feedLikes.contains(feed.getObjId()));
-            feed.setFavorited(feedFavorites.contains((feed.getObjId())));
-            feed.setImage(adventure.getParseFile("image"));
-            feedList.add(feed);
-          }
+          ParseObject author = adventure.getParseObject("author");
+          Feed feed = Feed.ParseToFeed(adventure, FacebookUser.ParseToFacebookUser(author));
+          Location feedLocation = new Location("");
+          feedLocation.setLatitude(adventure.getDouble("locationLatitude"));
+          feedLocation.setLongitude(adventure.getDouble("locationLongitude"));
+          feed.setDistance(feedLocation.distanceTo(location) * MetersToMiles);
+          feed.setLiked(feedLikes.contains(feed.getObjId()));
+          feed.setFavorited(feedFavorites.contains((feed.getObjId())));
+          feed.setImage(adventure.getParseFile("image"));
+          feedList.add(feed);
+          karmaCount += feed.getLikesCount();
         }
 
+        postsCount = parseObjects.size();
         listAdapter.notifyDataSetChanged();
         refreshLayout.setRefreshing(false);
+        updateUserProfileHeader();
       }
     });
+  }
+
+  private void updateUserProfileHeader() {
+    karmaTextView.setText(karmaCount + "");
+    postsTextView.setText(postsCount + "");
+    likesTextView.setText(likesCount + "");
   }
 
 
@@ -327,31 +349,10 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_feed, container, false);
-  }
-
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-    menuInflater.inflate(R.menu.menu_feed, menu);
-
-    SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-    SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
-    SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
-    searchView.setSearchableInfo(searchableInfo);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem menuItem) {
-    switch (menuItem.getItemId()) {
-      case R.id.action_peek:
-        Intent intent = new Intent(context, LocationActivity.class);
-        pDialogMap = ProgressDialog.show(getActivity(), "", "Opening map...", true);
-        startActivityForResult(intent, SELECT_LOCATION_REQUEST);
-        return true;
-      default:
-        return super.onOptionsItemSelected(menuItem);
-    }
+    View view = inflater.inflate(R.layout.fragment_feed, container, false);
+    // Inflate profile view
+    profileHeaderView = inflater.inflate(R.layout.view_user_profile_header, null);
+    return view;
   }
 
   @Override
@@ -366,21 +367,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     super.onDetach();
     activity = null;
     context = null;
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (pDialogMap != null) {
-      pDialogMap.dismiss();
-    }
-
-    if (requestCode == SELECT_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
-      AdventureLocation location = (AdventureLocation) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
-      Intent intent = new Intent(context, FilteredFeedActivity.class);
-      intent.setAction(ACTION_PEEK);
-      intent.putExtra(LocationActivity.EXTRA_LOCATION, location);
-      startActivity(intent);
-    }
   }
 
   @Override

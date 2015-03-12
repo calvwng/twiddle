@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.shared.UtilHelper;
 
 /**
@@ -15,7 +16,7 @@ import com.cpe409.twiddle.shared.UtilHelper;
  */
 public class FeedContextMenu extends LinearLayout {
   private final int CONTEXT_MENU_WIDTH = UtilHelper.dpToPx(240);
-  private int feedItem = -1;
+  private Feed feed;
 
   private Button reportButton;
   private Button shareButton;
@@ -24,23 +25,29 @@ public class FeedContextMenu extends LinearLayout {
 
   private OnFeedContextMenuItemClickListener onItemClickListener;
 
-  public FeedContextMenu(Context context) {
+  public FeedContextMenu(Context context, boolean favorited) {
     super(context);
-    init();
+    init(favorited);
   }
 
-  private void init() {
+  private void init(boolean favorited) {
     View v = LayoutInflater.from(getContext()).inflate(R.layout.view_context_menu, this, true);
     reportButton = (Button) v.findViewById(R.id.btnReport);
     shareButton = (Button) v.findViewById(R.id.btnShare);
     favoritesButton = (Button) v.findViewById(R.id.btnFavorite);
     cancelButton = (Button) v.findViewById(R.id.btnCancel);
 
+    if (favorited) {
+      favoritesButton.setText("UNFAVORITE");
+    } else {
+      favoritesButton.setText("FAVORITE");
+    }
+
     reportButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         if (onItemClickListener != null) {
-          onItemClickListener.onReportClick(feedItem);
+          onItemClickListener.onReportClick(feed);
         }
       }
     });
@@ -49,7 +56,7 @@ public class FeedContextMenu extends LinearLayout {
       @Override
       public void onClick(View v) {
         if (onItemClickListener != null) {
-          onItemClickListener.onShareClick(feedItem);
+          onItemClickListener.onShareClick(feed);
         }
       }
     });
@@ -58,7 +65,7 @@ public class FeedContextMenu extends LinearLayout {
       @Override
       public void onClick(View v) {
         if (onItemClickListener != null) {
-          onItemClickListener.onFavoritesClick(feedItem);
+          onItemClickListener.onFavoritesClick(feed);
         }
       }
     });
@@ -67,7 +74,7 @@ public class FeedContextMenu extends LinearLayout {
       @Override
       public void onClick(View v) {
         if (onItemClickListener != null) {
-          onItemClickListener.onCancelClick(feedItem);
+          onItemClickListener.onCancelClick(feed);
         }
       }
     });
@@ -77,8 +84,8 @@ public class FeedContextMenu extends LinearLayout {
     setLayoutParams(new LayoutParams(CONTEXT_MENU_WIDTH, ViewGroup.LayoutParams.WRAP_CONTENT));
   }
 
-  public void bindToItem(int feedItem) {
-    this.feedItem = feedItem;
+  public void bindToItem(Feed feed) {
+    this.feed = feed;
   }
 
   public void dismiss() {
@@ -91,12 +98,12 @@ public class FeedContextMenu extends LinearLayout {
   }
 
   public interface OnFeedContextMenuItemClickListener {
-    public void onReportClick(int feedItem);
+    public void onReportClick(Feed feed);
 
-    public void onShareClick(int feedItem);
+    public void onShareClick(Feed feed);
 
-    public void onFavoritesClick(int feedItem);
+    public void onFavoritesClick(Feed feed);
 
-    public void onCancelClick(int feedItem);
+    public void onCancelClick(Feed feed);
   }
 }

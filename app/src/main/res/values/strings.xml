@@ -4,6 +4,7 @@
     <string name="app_name">Twiddle</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_profile">Profile</string>
     <string name="facebook_app_id">753967378005166</string>
     <string name="google_maps_api_key">AIzaSyAIpFT40C6rNZWMPCTyPuGNoTOQIkhz-_s</string>
     <string name="google_maps_api_key_release">AIzaSyDbDfGn09u3c_hu9h1hE5k_DDmT93qHL2g</string>
@@ -21,5 +22,5 @@
     <string name="title_activity_add_image">Add Image</string>
     <string name="feed_search_hint">Search for Adventures</string>
     <string name="action_peek">Peek at another city</string>
-
+    <string name="title_activity_adventure">AdventureActivity</string>
 </resources>

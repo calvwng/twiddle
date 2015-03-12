@@ -17,6 +17,10 @@ public class FacebookUser {
     return new FacebookUser(user);
   }
 
+  public static String fbIdtoPhotoUrl(String fbId) {
+    return FB_GRAPH_URL + fbId + FB_PICTURE_URL;
+  }
+
   public FacebookUser(ParseObject user) {
     this.userId = user.getString("fbId");
     this.name = user.getString("fbName");

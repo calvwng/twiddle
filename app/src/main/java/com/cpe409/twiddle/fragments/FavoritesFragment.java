@@ -1,7 +1,6 @@
 package com.cpe409.twiddle.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -25,10 +23,7 @@ import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.activities.CreateActivity;
-import com.cpe409.twiddle.activities.FilteredFeedActivity;
-import com.cpe409.twiddle.activities.LocationActivity;
 import com.cpe409.twiddle.adapters.FeedListAdapter;
-import com.cpe409.twiddle.model.AdventureLocation;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.model.Feed;
@@ -51,11 +46,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FeedFragment#newInstance} factory method to
+ * A simple {@link android.support.v4.app.Fragment} subclass.
+ * Use the {@link com.cpe409.twiddle.fragments.FavoritesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
+public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFeedItemClickListener,
     FeedContextMenu.OnFeedContextMenuItemClickListener {
 
   private Set<String> feedLikes;
@@ -64,21 +59,16 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
   private ListView listView;
   private FeedListAdapter listAdapter;
-  private ProgressDialog pDialogMap;
   private List<Feed> feedList;
   private Context context;
   private Location location;
-  private FloatingActionButton floatingActionButton;
   private SwipeRefreshLayout refreshLayout;
+  private FloatingActionButton floatingActionButton;
   private String searchQuery;
 
   public static final String SEARCH_QUERY_ARG = "SEARCH_QUERY_TAG";
-  public static final String LOCATION_ARG = "LOCATION_ARG";
-  public static final int SELECT_LOCATION_REQUEST = 1;
-  public static final String ACTION_PEEK = "SELECT_LOCATION_ACTION";
   private static final float MetersToMiles = 0.000621371f;
-  private static final String TAG = FeedFragment.class.getSimpleName();
-
+  private static final String TAG = FavoritesFragment.class.getSimpleName();
 
   /**
    * Use this factory method tMaterialNavigationDrawero create a new instance of
@@ -86,18 +76,18 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
    *
    * @return A new instance of fragment FeedFragment.
    */
-  public static FeedFragment newInstance() {
+  public static FavoritesFragment newInstance() {
     Bundle args = new Bundle();
     return newInstance(args);
   }
 
-  public static FeedFragment newInstance(Bundle args) {
-    FeedFragment fragment = new FeedFragment();
+  public static FavoritesFragment newInstance(Bundle args) {
+    FavoritesFragment fragment = new FavoritesFragment();
     fragment.setArguments(args);
     return fragment;
   }
 
-  public FeedFragment() {
+  public FavoritesFragment() {
     // Required empty public constructor
   }
 
@@ -109,16 +99,45 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     setupListeners();
     checkUserAccess();
 
+    floatingActionButton.setVisibility(View.GONE);
+
     Bundle args = getArguments();
     searchQuery = args.getString(SEARCH_QUERY_ARG, "");
-    final AdventureLocation peekLocation = (AdventureLocation) args.getSerializable(LOCATION_ARG);
 
     feedList = new ArrayList<>();
     feedLikes = new HashSet<>();
     feedFavorites = new HashSet<>();
 
-    setupListView();
-    setLocation(peekLocation);
+    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList, false);
+    listAdapter.setOnFeedItemClickListener(this);
+    listView.setAdapter(listAdapter);
+    listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        FeedContextMenuManager.getInstance().onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+      }
+    });
+
+
+    refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        queryFeedStories();
+      }
+    });
+    new Handler().postDelayed(new Runnable() {
+
+      @Override
+      public void run() {
+        refreshLayout.setRefreshing(true);
+      }
+    }, 1);
+
     queryFeedStories();
   }
 
@@ -136,54 +155,10 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
         startActivity(i);
       }
     });
-
-    refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override
-      public void onRefresh() {
-        queryFeedStories();
-      }
-    });
-    new Handler().postDelayed(new Runnable() {
-
-      @Override
-      public void run() {
-        refreshLayout.setRefreshing(true);
-      }
-    }, 1);
-  }
-
-  private void setupListView() {
-    listAdapter = new FeedListAdapter(activity.getApplicationContext(), feedList, false);
-    listAdapter.setOnFeedItemClickListener(this);
-    listView.setAdapter(listAdapter);
-    listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-      @Override
-      public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-      }
-
-      @Override
-      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        FeedContextMenuManager.getInstance().onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-      }
-    });
-  }
-
-  private void setLocation(final AdventureLocation peekLocation) {
-    if (peekLocation != null) {
-      // If no location is set and there is a peek location...
-      location = new Location("");
-      location.setLatitude(peekLocation.latitude);
-      location.setLongitude(peekLocation.longitude);
-    } else {
-      // If no peek location was provided, get the current one
-      location = LocationHelper.getInstance().getLocation(context);
-    }
   }
 
   private void checkUserAccess() {
     int visibility = CurrentUser.getInstance().isLoggedIn() ? View.VISIBLE : View.INVISIBLE;
-    floatingActionButton.setVisibility(visibility);
   }
 
   /**
@@ -263,6 +238,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       return;
     }
 
+    location = LocationHelper.getInstance().getLocation(context);
     if (location == null) {
       refreshLayout.setRefreshing(false);
       Toast.makeText(context, "Couldn't find location.", Toast.LENGTH_SHORT).show();
@@ -279,10 +255,7 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     final double latMin = lat - Math.toDegrees(radius / earthRadius);
 
     ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
-    query.whereGreaterThan("locationLatitude", latMin);
-    query.whereGreaterThan("locationLongitude", lonMin);
-    query.whereLessThan("locationLatitude", latMax);
-    query.whereLessThan("locationLongitude", lonMax);
+    query.whereContainedIn("objectId", new ArrayList<String>(feedFavorites));
     query.include("author");
 
     Log.d(TAG, "Querying favorites");
@@ -342,19 +315,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem menuItem) {
-    switch (menuItem.getItemId()) {
-      case R.id.action_peek:
-        Intent intent = new Intent(context, LocationActivity.class);
-        pDialogMap = ProgressDialog.show(getActivity(), "", "Opening map...", true);
-        startActivityForResult(intent, SELECT_LOCATION_REQUEST);
-        return true;
-      default:
-        return super.onOptionsItemSelected(menuItem);
-    }
-  }
-
-  @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.activity = activity;
@@ -366,21 +326,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     super.onDetach();
     activity = null;
     context = null;
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (pDialogMap != null) {
-      pDialogMap.dismiss();
-    }
-
-    if (requestCode == SELECT_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
-      AdventureLocation location = (AdventureLocation) data.getSerializableExtra(LocationActivity.EXTRA_LOCATION);
-      Intent intent = new Intent(context, FilteredFeedActivity.class);
-      intent.setAction(ACTION_PEEK);
-      intent.putExtra(LocationActivity.EXTRA_LOCATION, location);
-      startActivity(intent);
-    }
   }
 
   @Override

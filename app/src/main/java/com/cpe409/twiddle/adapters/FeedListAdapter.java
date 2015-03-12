@@ -5,6 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +17,14 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.activities.AdventureActivity;
+import com.cpe409.twiddle.activities.UserProfileActivity;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.views.RoundImageView;
@@ -30,8 +36,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -43,6 +47,7 @@ public class FeedListAdapter extends BaseAdapter {
 
   private Context context;
   private List<Feed> feedList;
+  private Boolean userScreenOpened;
 
   private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
   private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
@@ -52,9 +57,10 @@ public class FeedListAdapter extends BaseAdapter {
   private OnFeedItemClickListener onFeedItemClickListener;
 
 
-  public FeedListAdapter(Context context, List<Feed> feedList) {
+  public FeedListAdapter(Context context, List<Feed> feedList, boolean userScreenOpened) {
     this.context = context;
     this.feedList = feedList;
+    this.userScreenOpened = userScreenOpened;
   }
 
   public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
@@ -85,6 +91,7 @@ public class FeedListAdapter extends BaseAdapter {
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       view = inflater.inflate(R.layout.item_feed, parent, false);
       holder = new ViewHolder();
+      holder.authorLayout = (LinearLayout) view.findViewById(R.id.feedUserLayout);
       holder.authorImage = (RoundImageView) view.findViewById(R.id.feedUserImage);
       holder.authorName = (TextView) view.findViewById(R.id.feedUserName);
       holder.feedPicture = (ImageView) view.findViewById(R.id.feedPicture);
@@ -94,31 +101,52 @@ public class FeedListAdapter extends BaseAdapter {
       holder.feedLike = (ImageView) view.findViewById(R.id.feedLike);
       holder.likeButton = (ImageButton) view.findViewById(R.id.btnLike);
       holder.commentsButton = (ImageButton) view.findViewById(R.id.btnComments);
-      holder.commentsButton.setTag(position);
       holder.moreButton = (ImageButton) view.findViewById(R.id.btnMore);
-      holder.moreButton.setTag(position);
       holder.likesCount = (TextSwitcher) view.findViewById(R.id.likesCounter);
       view.setTag(holder);
     } else {
       holder = (ViewHolder) view.getTag();
     }
     Feed feed = feedList.get(position);
+    holder.commentsButton.setTag(feed);
+    holder.moreButton.setTag(feed);
+    holder.authorLayout.setTag(feed);
+    holder.feedPicture.setTag(feed);
     holder.feed = feed;
     Picasso.with(context).load(feed.getAuthor().getImageURL()).into(holder.authorImage);
+
+    holder.authorLayout.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (!userScreenOpened) {
+          Feed feed = (Feed) v.getTag();
+          Intent i = new Intent(context, UserProfileActivity.class);
+          i.putExtra(UserProfileActivity.USER_ID, feed.getAuthor().getUserId());
+          i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          context.startActivity(i);
+        }
+      }
+    });
+
+    holder.feedPicture.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Feed feed = (Feed)v.getTag();
+        Intent i = new Intent(context, AdventureActivity.class);
+        i.putExtra(AdventureActivity.TITLE, feed.getTitle());
+        // TODO: Pass along image
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
+      }
+    });
+
     holder.authorName.setText(feed.getAuthor().getName());
     holder.feedTitle.setText(feed.getTitle());
     holder.feedDistance.setText(feed.getDistance() + " Mi");
+
     if (feed.getImageData() != null && feed.getImageData().length != 0) {
-      try {
-        File file = new File(context.getCacheDir(), "image.png");
-        file.createNewFile();
-
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(feed.getImageData());
-        Picasso.with(context).load(file).into(holder.feedPicture);
-      } catch (Exception e) {
-
-      }
+      Bitmap bitmap = BitmapFactory.decodeByteArray(feed.getImageData(), 0, feed.getImageData().length);
+      holder.feedPicture.setImageBitmap(bitmap);
     } else {
       String imgUrl = feed.getImgUrl();
       if (imgUrl != null) {
@@ -160,7 +188,7 @@ public class FeedListAdapter extends BaseAdapter {
       @Override
       public void onClick(View v) {
         if (onFeedItemClickListener != null) {
-          onFeedItemClickListener.onMoreClick(v, (Integer) v.getTag());
+          onFeedItemClickListener.onMoreClick(v, (Feed) v.getTag());
         }
       }
     });
@@ -169,7 +197,7 @@ public class FeedListAdapter extends BaseAdapter {
       @Override
       public void onClick(View v) {
         if (onFeedItemClickListener != null) {
-          onFeedItemClickListener.onCommentsClick(v, (Integer) v.getTag());
+          onFeedItemClickListener.onCommentsClick(v, (Feed) v.getTag());
         }
       }
     });
@@ -203,6 +231,8 @@ public class FeedListAdapter extends BaseAdapter {
     ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.likeButton, "scaleY", 0.2f, 1f);
     bounceAnimY.setDuration(300);
     bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+
     bounceAnimY.addListener(new AnimatorListenerAdapter() {
       @Override
       public void onAnimationStart(Animator animation) {
@@ -319,15 +349,16 @@ public class FeedListAdapter extends BaseAdapter {
   }
 
   public interface OnFeedItemClickListener {
-    public void onCommentsClick(View v, int position);
+    public void onCommentsClick(View v, Feed feed);
 
-    public void onMoreClick(View v, int position);
+    public void onMoreClick(View v, Feed feed);
   }
 
   static class ViewHolder {
     Feed feed;
     RoundImageView authorImage;
     TextView authorName;
+    LinearLayout authorLayout;
     ImageView feedPicture;
     TextView feedTitle;
     TextView feedDistance;
@@ -339,5 +370,3 @@ public class FeedListAdapter extends BaseAdapter {
     TextSwitcher likesCount;
   }
 }
-
-

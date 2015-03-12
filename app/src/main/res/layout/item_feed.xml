@@ -1,174 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- item_feed.xml -->
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                    android:id="@+id/card_view"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    card_view:cardUseCompatPadding="true"
-                                    android:layout_gravity="center"
-                                    android:layout_margin="8dp"
-                                    card_view:cardCornerRadius="4dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white">
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                        android:id="@+id/card_view"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        card_view:cardUseCompatPadding="true"
+                                        android:layout_margin="8dp"
+                                        android:layout_gravity="center"
+                                        card_view:cardCornerRadius="4dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="horizontal">
-
-            <com.cpe409.twiddle.views.RoundImageView
-                android:id="@+id/feedUserImage"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginRight="8dp"
-                android:layout_gravity="center"
-                android:scaleType="center"/>
-
-            <TextView
-                android:id="@+id/feedUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingLeft="1dp"
-                android:text="Michael"
-                android:textColor="@color/text_secondary"
-                android:gravity="center"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_maps_place_black"
-                    android:layout_toLeftOf="@+id/feedDistance"
-                    android:padding="-12dp"/>
-
-                <TextView
-                    android:id="@+id/feedDistance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="1dp"
-                    android:text="0.5 m"
-                    android:textColor="@color/text_secondary"
-                    android:layout_alignParentRight="true"
-                    android:gravity="center"/>
-            </RelativeLayout>
-
-
-        </LinearLayout>
-
-
-        <com.cpe409.twiddle.views.SquaredFrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/feedPicture"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0.5"
-                android:src="@drawable/bg_nav_drawer"
-                android:scaleType="centerCrop"/>
-
-            <TextView
-                android:id="@+id/feedTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:textColor="@color/text_secondary"
-                android:layout_margin="16dp"
-                android:text="Example title for adventure Example title for adventure"/>
-
-            <View
-                android:id="@+id/feedBgLike"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="@drawable/bg_like_circle_background"/>
-
-            <ImageView
-                android:id="@+id/feedLike"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="center"
-                android:visibility="gone"
-                android:src="@drawable/ic_heart_outline_white"/>
-
-        </com.cpe409.twiddle.views.SquaredFrameLayout>
-
-        <ImageView
-            android:id="@+id/ivFeedBottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp">
-
-            <ImageButton
-                android:id="@+id/btnLike"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/btn_feed_action"
-                android:src="@drawable/ic_heart_outline_grey"/>
-
-            <ImageButton
-                android:id="@+id/btnComments"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/btn_feed_action"
-                android:src="@drawable/ic_comment_outline_grey"/>
-
-            <ImageButton
-                android:id="@+id/btnMore"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/btn_feed_action"
-                android:src="@drawable/ic_more_grey"/>
+            android:orientation="vertical"
+            android:background="@color/white">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical|right">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/feedUserLayout"
+                    android:orientation="horizontal">
+
+                    <com.cpe409.twiddle.views.RoundImageView
+                        android:id="@+id/feedUserImage"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_gravity="center"
+                        android:scaleType="center"/>
+
+                    <TextView
+                        android:id="@+id/feedUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="1dp"
+                        android:text="Michael"
+                        android:textColor="@color/text_secondary"
+                        android:gravity="center"/>
+
+                </LinearLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_maps_place_black"
+                        android:layout_toLeftOf="@+id/feedDistance"
+                        android:padding="-12dp"/>
+
+                    <TextView
+                        android:id="@+id/feedDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="1dp"
+                        android:text="0.5 m"
+                        android:textColor="@color/text_secondary"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"/>
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+
+            <com.cpe409.twiddle.views.SquaredFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_heart_small_blue"/>
+                    android:id="@+id/feedPicture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.5"
+                    android:src="@drawable/bg_nav_drawer"
+                    android:scaleType="centerCrop"/>
 
-                <TextSwitcher
-                    android:id="@+id/likesCounter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:inAnimation="@anim/slide_in_likes_counter"
-                    android:outAnimation="@anim/slide_out_likes_counter">
+                <TextView
+                    android:id="@+id/feedTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_margin="16dp"
+                    android:text="Example title for adventure Example title for adventure"/>
 
-                    <TextView
+                <View
+                    android:id="@+id/feedBgLike"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:background="@drawable/bg_like_circle_background"/>
+
+                <ImageView
+                    android:id="@+id/feedLike"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="center"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_heart_outline_white"/>
+
+            </com.cpe409.twiddle.views.SquaredFrameLayout>
+
+            <ImageView
+                android:id="@+id/ivFeedBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+
+                <ImageButton
+                    android:id="@+id/btnLike"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_feed_action"
+                    android:src="@drawable/ic_heart_outline_grey"/>
+
+                <ImageButton
+                    android:id="@+id/btnComments"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_feed_action"
+                    android:src="@drawable/ic_comment_outline_grey"/>
+
+                <ImageButton
+                    android:id="@+id/btnMore"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_feed_action"
+                    android:src="@drawable/ic_more_grey"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right">
+
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="123 likes"
-                        android:textColor="@color/text_like_counter"/>
+                        android:src="@drawable/ic_heart_small_blue"/>
 
-                    <TextView
+                    <TextSwitcher
+                        android:id="@+id/likesCounter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_like_counter"/>
-                </TextSwitcher>
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:inAnimation="@anim/slide_in_likes_counter"
+                        android:outAnimation="@anim/slide_out_likes_counter">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="123 likes"
+                            android:textColor="@color/text_like_counter"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_like_counter"/>
+                    </TextSwitcher>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

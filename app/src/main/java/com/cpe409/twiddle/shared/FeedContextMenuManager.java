@@ -11,6 +11,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.cpe409.twiddle.model.Feed;
 import com.cpe409.twiddle.views.FeedContextMenu;
 
 
@@ -40,19 +41,19 @@ public class FeedContextMenuManager implements View.OnAttachStateChangeListener,
 
   private FeedContextMenuManager() { }
 
-  public void toggleContextMenuFromView(View openingView, int feedItem, FeedContextMenu.OnFeedContextMenuItemClickListener listener) {
+  public void toggleContextMenuFromView(View openingView, Feed feed, FeedContextMenu.OnFeedContextMenuItemClickListener listener) {
     if (contextMenuView == null) {
-      showContextMenuFromView(openingView, feedItem, listener);
+      showContextMenuFromView(openingView, feed, listener);
     } else {
       hideContextMenu();
     }
   }
 
-  private void showContextMenuFromView(final View openingView, int feedItem, FeedContextMenu.OnFeedContextMenuItemClickListener listener) {
+  private void showContextMenuFromView(final View openingView, Feed feed, FeedContextMenu.OnFeedContextMenuItemClickListener listener) {
     if (!isContextMenuShowing) {
       isContextMenuShowing = true;
-      contextMenuView = new FeedContextMenu(openingView.getContext());
-      contextMenuView.bindToItem(feedItem);
+      contextMenuView = new FeedContextMenu(openingView.getContext(), feed.isFavorited());
+      contextMenuView.bindToItem(feed);
       contextMenuView.addOnAttachStateChangeListener(this);
       contextMenuView.setOnFeedMenuItemClickListener(listener);
 
