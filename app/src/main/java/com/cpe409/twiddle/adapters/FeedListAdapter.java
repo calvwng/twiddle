@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.activities.AdventureActivity;
 import com.cpe409.twiddle.activities.UserProfileActivity;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.Feed;
@@ -110,6 +111,7 @@ public class FeedListAdapter extends BaseAdapter {
     holder.commentsButton.setTag(feed);
     holder.moreButton.setTag(feed);
     holder.authorLayout.setTag(feed);
+    holder.feedPicture.setTag(feed);
     holder.feed = feed;
     Picasso.with(context).load(feed.getAuthor().getImageURL()).into(holder.authorImage);
 
@@ -123,6 +125,18 @@ public class FeedListAdapter extends BaseAdapter {
           i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
           context.startActivity(i);
         }
+      }
+    });
+
+    holder.feedPicture.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Feed feed = (Feed)v.getTag();
+        Intent i = new Intent(context, AdventureActivity.class);
+        i.putExtra(AdventureActivity.TITLE, feed.getTitle());
+        // TODO: Pass along image
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
       }
     });
 
