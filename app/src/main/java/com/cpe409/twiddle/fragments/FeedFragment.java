@@ -400,6 +400,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
   @Override
   public void onFavoritesClick(Feed feed) {
+    if (!CurrentUser.getInstance().isLoggedIn()) {
+      Toast.makeText(context, "Please log in before.", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
     FeedContextMenuManager.getInstance().hideContextMenu();
     if (feed.isFavorited()) {
       UnfavoriteFeed.unfavoriteFeed(feed);
@@ -410,8 +415,10 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
   @Override
   public void onCommentsClick(View v, Feed feed) {
-    //TODO
-    return;
+    if (!CurrentUser.getInstance().isLoggedIn()) {
+      Toast.makeText(context, "Please log in before Commenting.", Toast.LENGTH_SHORT).show();
+      return;
+    }
   }
 
   @Override
