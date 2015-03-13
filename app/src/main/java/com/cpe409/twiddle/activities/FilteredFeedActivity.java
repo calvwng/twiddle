@@ -15,6 +15,7 @@ import com.cpe409.twiddle.model.Feed;
 public class FilteredFeedActivity extends ActionBarActivity {
 
   private AdventureLocation peekLocation;
+  private boolean active;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,7 @@ public class FilteredFeedActivity extends ActionBarActivity {
     setContentView(R.layout.activity_filtered_feed);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+    active = false;
     peekLocation = (AdventureLocation) getIntent().getSerializableExtra(FeedFragment.LOCATION_ARG);
     handleIntent(getIntent());
   }
@@ -38,7 +40,10 @@ public class FilteredFeedActivity extends ActionBarActivity {
 
   @Override
   protected void onNewIntent(Intent intent) {
-    handleIntent(intent);
+    if (active) {
+      // Only handles the Intent again if the Activity was already active
+      handleIntent(intent);
+    }
   }
 
   @Override
@@ -48,6 +53,8 @@ public class FilteredFeedActivity extends ActionBarActivity {
     if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
       intent.putExtra(FeedFragment.LOCATION_ARG, peekLocation);
     }
+
+    active = true;
   }
 
   private void handleIntent(Intent intent) {
