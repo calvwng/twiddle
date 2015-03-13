@@ -11,30 +11,41 @@ public class AdventureLocation implements Serializable {
   public double latitude;
   public double longitude;
   public String strAddress;
+  public String city;
 
   public AdventureLocation(LatLng latLng, Address address) {
     this.latitude = latLng.latitude;
     this.longitude = latLng.longitude;
 
-    this.setAddress(address);
+    this.strAddress = getStrAddress(address);
+    this.city = getCityName(address);
   }
 
-  private void setAddress(Address address) {
-    String featureName = checkString(address.getFeatureName(), ", ");
-    String adminArea = checkString(address.getAdminArea(), ", ");
-    String subAdminArea = checkString(address.getSubAdminArea(), ", ");
-    String countryName = checkString(address.getCountryName(), "");
 
-    this.strAddress = featureName + adminArea + subAdminArea + countryName;
-  }
+  private String getStrAddress(Address address) {
+    String strAddress = "";
 
-  private String checkString(String str, String separator) {
-    if (str != null) {
-      str = str + separator;
-    } else {
-      str = "";
+    int maxIndex = address.getMaxAddressLineIndex();
+    if (maxIndex >= 0) {
+      for (int i = 0; i < maxIndex; i++) {
+        strAddress += address.getAddressLine(i);
+        strAddress += ", ";
+      }
+      strAddress += address.getAddressLine(maxIndex);
     }
 
-    return str;
+    return strAddress;
+  }
+
+  private String getCityName(Address address) {
+    if (address.getLocality() != null) {
+      city = address.getLocality();
+    } else if (address.getSubAdminArea() != null) {
+      city = address.getSubAdminArea();
+    } else {
+      city = address.getAdminArea();
+    }
+
+    return city;
   }
 }

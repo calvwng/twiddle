@@ -175,6 +175,8 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       location = new Location("");
       location.setLatitude(peekLocation.latitude);
       location.setLongitude(peekLocation.longitude);
+      activity.setTitle(peekLocation.city);
+
     } else {
       // If no peek location was provided, get the current one
       location = LocationHelper.getInstance().getLocation(context);
