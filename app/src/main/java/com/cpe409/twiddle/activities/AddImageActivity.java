@@ -1,5 +1,6 @@
 package com.cpe409.twiddle.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,14 +11,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -36,6 +36,15 @@ public class AddImageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_image);
         rootView = this.findViewById(R.id.activity_add_image_layout);
+        final GridView gridview = (GridView) findViewById(R.id.imageGridView);
+        gridview.setAdapter(new ImageAdapter(this));
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setPicture((byte[]) gridview.getAdapter().getItem(position));
+            }
+        });
+
     }
 
 
@@ -112,5 +121,61 @@ public class AddImageActivity extends ActionBarActivity {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_SELECT);
 
     }
+
+
+
+
+    public class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+
+        @Override
+        public int getCount() {
+            return mThumbIds.length;
+        }
+        @Override
+        public Object getItem(int position) {
+            Bitmap pictureBitMap = BitmapFactory.decodeResource(mContext.getResources(),
+                    mThumbIds[position]);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            pictureBitMap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] pictureByteArray = stream.toByteArray();
+
+            return pictureByteArray;
+        }
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        public ImageAdapter(Context c) {
+            mContext = c;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null){
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(8, 8, 8, 8);
+            }
+            else{
+                imageView = (ImageView) convertView;
+            }
+            imageView.setImageResource(mThumbIds[position]);
+            return imageView;
+        }
+
+        private Integer[] mThumbIds = {
+                R.drawable.gridview_beach, R.drawable.gridview_coffee,
+                R.drawable.gridview_flowers, R.drawable.gridview_food,
+                R.drawable.gridview_forest, R.drawable.gridview_museum,
+                R.drawable.gridview_outdoors, R.drawable.gridview_parachute,
+                R.drawable.gridview_snowboarding, R.drawable.gridview_icecream,
+                R.drawable.gridview_library, R.drawable.gridview_marshmallows
+        };
+    }
+
+
 
 }

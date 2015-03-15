@@ -16,11 +16,11 @@
     <string name="create_fragment_txtview_location">Location</string>
     <string name="create_fragment_txtview_imge">Add an image</string>
     <string name="map_search_hint">Search for places</string>
-    <string name="activity_add_image_submit">Okay</string>
-    <string name="activity_add_image_cancel">Cancel</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_add_image">Add Image</string>
     <string name="feed_search_hint">Search for Adventures</string>
+    <string name="choose_default_image">Choose a default image:</string>
+
     <string name="action_peek">Peek at another city</string>
     <string name="title_activity_adventure">AdventureActivity</string>
 </resources>
