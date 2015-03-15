@@ -3,6 +3,8 @@ package com.cpe409.twiddle.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,8 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
+
 public class CreateFragment extends Fragment {
 
   private final static int SELECT_LOCATION_REQUEST = 1;
@@ -37,6 +42,7 @@ public class CreateFragment extends Fragment {
   private TextView textViewLocation;
   private TextView textViewImage;
   private ProgressDialog pDialogMap;
+  private ImageView adventureImage;
   private byte[] imageData;
 
   @Override
@@ -81,9 +87,14 @@ public class CreateFragment extends Fragment {
         this.textViewLocation.setText(adventureLocation.strAddress);
         this.textViewLocation.setTag(adventureLocation);
     } else if (requestCode == ADD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
-        /* TODO: Make it image in future */
         this.textViewImage.setText("Image Selected!");
         this.imageData = data.getByteArrayExtra("image");
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(this.imageData , 0, this.imageData.length);
+        this.adventureImage.setImageBitmap(bitmap);
+        this.adventureImage.setVisibility(View.VISIBLE);
+        this.adventureImage.invalidate();
+
     }
   }
 
@@ -92,6 +103,7 @@ public class CreateFragment extends Fragment {
     this.editTextDescription_ = (EditText) this.rootView.findViewById(R.id.editTextDescription);
     this.textViewLocation = (TextView) this.rootView.findViewById(R.id.textViewAddLocation);
     this.textViewImage = (TextView) this.rootView.findViewById(R.id.textViewAddImage);
+    this.adventureImage = (ImageView) this.rootView.findViewById(R.id.pictureImageView);
   }
 
   private void addEvents() {

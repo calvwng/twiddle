@@ -2,6 +2,7 @@ package com.cpe409.twiddle.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -19,15 +20,15 @@ import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class AddImageActivity extends ActionBarActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_SELECT = 2;
     public final static String IMAGE = "image";
-    private byte[] scaledData;
 
-    ImageView pictureImageView;
     View rootView;
-    private ParseFile photoFile;
 
 
     @Override
@@ -35,28 +36,6 @@ public class AddImageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_image);
         rootView = this.findViewById(R.id.activity_add_image_layout);
-        this.pictureImageView = (ImageView) this.rootView.findViewById(R.id.pictureImageView);
-        final Button submitButton = (Button) findViewById(R.id.submit_image_button);
-        final Button cancelButton = (Button) findViewById(R.id.cancel_image_button);
-
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(IMAGE, scaledData);
-
-                setResult(RESULT_OK, resultIntent);
-                finish();
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                setResult(RESULT_CANCELED);
-                finish();
-
-            }
-        });
-
     }
 
 
@@ -90,18 +69,27 @@ public class AddImageActivity extends ActionBarActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            this.pictureImageView.setImageBitmap(imageBitmap);
-            this.pictureImageView.setVisibility(View.VISIBLE);
-            this.pictureImageView.invalidate();
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-            this.scaledData = bos.toByteArray();
+            setPicture(bos.toByteArray());
+        } else if (requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK) {
+            Uri selectedImage = data.getData();
+            InputStream imageStream = null;
+            try {
+                imageStream = getContentResolver().openInputStream(selectedImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Bitmap imageBitmap = BitmapFactory.decodeStream(imageStream);
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(imageBitmap, 500,500, true);
+
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            scaledBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+            setPicture(bos.toByteArray());
         }
     }
-
-
-
 
     private void takePicture() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -110,10 +98,18 @@ public class AddImageActivity extends ActionBarActivity {
         }
     }
 
+    private void setPicture(byte[] image) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(IMAGE, image);
+
+        setResult(RESULT_OK, resultIntent);
+        finish();
+    }
+
     private void chooseFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                "content://media/internal/images/media"));
-        startActivityForResult(galleryIntent, REQUEST_IMAGE_CAPTURE);
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, REQUEST_IMAGE_SELECT);
 
     }
 

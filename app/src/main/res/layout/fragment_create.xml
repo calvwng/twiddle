@@ -47,4 +47,13 @@
         android:drawableEnd="@drawable/ic_action_picture"
         android:id="@+id/textViewAddImage" />
 
+    <ImageView
+        android:id="@+id/pictureImageView"
+        android:layout_width="500px"
+        android:layout_height="500px"
+        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textViewAddImage" />
+
 </RelativeLayout>
