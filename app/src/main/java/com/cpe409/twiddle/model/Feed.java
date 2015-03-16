@@ -91,6 +91,7 @@ public class Feed {
     }
 
     try {
+      this.imgUrl = file.getUrl();
       this.imageData = file.getData();
     } catch (ParseException e) {
       e.printStackTrace();

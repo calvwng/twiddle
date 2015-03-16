@@ -1,23 +1,45 @@
 package com.cpe409.twiddle.activities;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.cpe409.twiddle.R;
+import com.squareup.picasso.Picasso;
 
 public class AdventureActivity extends ActionBarActivity {
 
-  private String title;
+
   public static final String TITLE = "adventure_title";
+  public static final String IMAGE_URL = "image_url";
+  public static final String IMAGE_DATA = "image_data";
+  private String title;
+  private String imgUrl;
+  private byte[] imgData;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_adventure);
+
     title = getIntent().getExtras().getString(TITLE);
     setTitle(title);
+
+    ImageView adventureImage = (ImageView)findViewById(R.id.adventure_image);
+    imgData = getIntent().getExtras().getByteArray(IMAGE_DATA);
+    imgUrl = getIntent().getExtras().getString(IMAGE_URL);
+
+    if (imgData != null) {
+      Bitmap bitmap = BitmapFactory.decodeByteArray(imgData , 0, imgData.length);
+      adventureImage.setImageBitmap(bitmap);
+    }
+    else if (imgUrl != null) {
+      Picasso.with(this).load(imgUrl).into(adventureImage);
+    }
   }
 
   @Override
