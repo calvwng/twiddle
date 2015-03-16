@@ -9,15 +9,18 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.views.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 
 public class AdventureActivity extends ActionBarActivity {
 
 
   public static final String TITLE = "adventure_title";
+  public static final String DESCRIPTION = "description";
   public static final String IMAGE_URL = "image_url";
   public static final String IMAGE_DATA = "image_data";
   private String title;
+  private String description;
   private String imgUrl;
   private byte[] imgData;
 
@@ -28,6 +31,10 @@ public class AdventureActivity extends ActionBarActivity {
 
     title = getIntent().getExtras().getString(TITLE);
     setTitle(title);
+
+    description = getIntent().getExtras().getString(DESCRIPTION);
+    ExpandableTextView descriptView = (ExpandableTextView)findViewById(R.id.adventure_description);
+    descriptView.setText(description);
 
     ImageView adventureImage = (ImageView)findViewById(R.id.adventure_image);
     imgData = getIntent().getExtras().getByteArray(IMAGE_DATA);

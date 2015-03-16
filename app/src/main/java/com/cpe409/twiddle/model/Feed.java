@@ -98,7 +98,13 @@ public class Feed {
     }
   }
 
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
+  public String getDescription() {
+    return description;
+  }
 
   public byte[] getImageData() {
       return this.imageData;

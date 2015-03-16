@@ -134,6 +134,7 @@ public class FeedListAdapter extends BaseAdapter {
         Feed feed = (Feed)v.getTag();
         Intent i = new Intent(context, AdventureActivity.class);
         i.putExtra(AdventureActivity.TITLE, feed.getTitle());
+        i.putExtra(AdventureActivity.DESCRIPTION, feed.getDescription());
         i.putExtra(AdventureActivity.IMAGE_DATA, feed.getImageData()); // Pass image byte[]
         i.putExtra(AdventureActivity.IMAGE_URL, feed.getImgUrl());     // Pass image url in case
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
