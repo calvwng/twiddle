@@ -36,11 +36,14 @@
             android:orientation="horizontal">
             <ImageButton
                 android:id="@+id/btn_like"
+                android:src="@drawable/ic_heart_outline_white"
+                android:scaleType="center"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
             <TextView
                 android:id="@+id/text_social_counters"
                 android:text="# likes, # comments"
+                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
         </LinearLayout>
