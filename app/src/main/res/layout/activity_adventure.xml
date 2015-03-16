@@ -49,6 +49,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
         </LinearLayout>
+
+        <fragment
+            android:id="@+id/list"
+            android:name="com.cpe409.twiddle.fragments.CommentListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="170dp" />
     </LinearLayout>
 
 </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
