@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-<<<<<<< HEAD
+
     <item android:id="@+id/action_peek"
           android:title="@string/action_peek"
           android:icon="@drawable/ic_peek"
           app:showAsAction="ifRoom"/>
-=======
+
     <item android:id="@+id/action_filter"
           android:title="@string/action_search"
           android:icon="@drawable/ic_action_content_sort"
@@ -21,7 +21,7 @@
             </group>
         </menu>
     </item>
->>>>>>> Sort partial
+
 
     <item android:id="@+id/action_search"
           android:title="@string/action_search"

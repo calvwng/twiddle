@@ -32,7 +32,7 @@ public class Comment {
   }
 
   public String getText() {
-    return getText();
+    return this.text;
   }
 
   public String getObjId() {
