@@ -5,6 +5,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 
 /**
  * Created by Michael on 2/17/2015.
@@ -19,7 +20,9 @@ public class Feed {
   private boolean liked;
   private boolean favorited;
   private String distance;
+  private float numericDistance;
   private byte[] imageData;
+  private Date createdAt;
 
   public Feed() {
 
@@ -39,6 +42,7 @@ public class Feed {
     feed.objId = adventure.getObjectId();
     feed.description = adventure.getString("adventureDescription");
     feed.likesCount = adventure.getInt("likes");
+    feed.createdAt = adventure.getCreatedAt();
     feed.author = author;
     feed.liked = false;
     feed.favorited = false;
@@ -114,8 +118,17 @@ public class Feed {
     return this.distance;
   }
 
+  public float getNumericDistance() {
+    return this.numericDistance;
+  }
+
   public void setDistance(float distance) {
     DecimalFormat df = new DecimalFormat("#.#");
+    this.numericDistance = distance;
     this.distance = df.format(distance);
+  }
+
+  public Date getCreatedAt() {
+    return this.createdAt;
   }
 }

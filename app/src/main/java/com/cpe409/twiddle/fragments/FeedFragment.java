@@ -370,6 +370,34 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
         });
         listAdapter.notifyDataSetChanged();
         break;
+        case R.id.action_filter_distance:
+          Collections.sort(feedList, new Comparator<Feed>() {
+            @Override
+            public int compare(Feed lhs, Feed rhs) {
+              if (lhs.getNumericDistance() > rhs.getNumericDistance())
+                return 1;
+              else if (lhs.getNumericDistance() < rhs.getNumericDistance())
+                return -1;
+              else
+                return 0;
+            }
+          });
+          listAdapter.notifyDataSetChanged();
+          break;
+          case R.id.action_filter_new:
+            Collections.sort(feedList, new Comparator<Feed>() {
+              @Override
+              public int compare(Feed lhs, Feed rhs) {
+                if (lhs.getCreatedAt().before(rhs.getCreatedAt()))
+                  return 1;
+                else if (lhs.getCreatedAt().after(rhs.getCreatedAt()))
+                  return -1;
+                else
+                  return 0;
+              }
+            });
+            listAdapter.notifyDataSetChanged();
+            break;
     }
     return super.onOptionsItemSelected(item);
   }

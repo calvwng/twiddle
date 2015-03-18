@@ -26,4 +26,7 @@
     <string name="title_activity_location">Select a Location</string>
     <string name="title_activity_adventure">AdventureActivity</string>
     <string name="title_activity_create">New Adventure</string>
+    <string name="feed_filter_top">Top</string>
+    <string name="feed_filter_new">New</string>
+    <string name="feed_filter_distance">Distance</string>
 </resources>

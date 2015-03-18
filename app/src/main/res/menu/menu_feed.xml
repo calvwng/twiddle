@@ -15,9 +15,9 @@
           app:showAsAction="always">
         <menu >
             <group android:id="@+id/group_filter">
-                <item android:id="@+id/action_filter_top" android:title="Top"></item>
-                <item android:id="@+id/action_filter_new" android:title="New"></item>
-                <item android:id="@+id/action_filter_distance" android:title="Distance"></item>
+                <item android:id="@+id/action_filter_top" android:title="@string/feed_filter_top"/>
+                <item android:id="@+id/action_filter_new" android:title="@string/feed_filter_new"/>
+                <item android:id="@+id/action_filter_distance" android:title="@string/feed_filter_distance"/>
             </group>
         </menu>
     </item>

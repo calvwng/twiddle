@@ -248,10 +248,6 @@ public class FavoritesFragment extends Fragment implements FeedListAdapter.OnFee
     double lon = location.getLongitude();
     double earthRadius = 6371;  // earth radius in km
     double radius = 100; // km
-    final double lonMin = lon - Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
-    final double lonMax = lon + Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(lat)));
-    final double latMax = lat + Math.toDegrees(radius / earthRadius);
-    final double latMin = lat - Math.toDegrees(radius / earthRadius);
 
     ParseQuery<ParseObject> query = new ParseQuery<>("Adventure");
     query.whereContainedIn("objectId", new ArrayList<String>(feedFavorites));
