@@ -10,7 +10,7 @@
         android:paddingBottom="8dp"
         android:paddingTop="8dp">
 
-        <ImageView
+        <com.cpe409.twiddle.views.RoundImageView
             android:id="@+id/profile_icon"
             android:layout_width="@dimen/comment_avatar_size"
             android:layout_height="@dimen/comment_avatar_size"

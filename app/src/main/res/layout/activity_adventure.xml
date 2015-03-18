@@ -3,11 +3,33 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/adventure_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_adventure_image_height"
+        android:scaleType="centerCrop"/>
+
+    <View
+        android:id="@+id/list_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"/>
 
     <com.github.ksoichiro.android.observablescrollview.ObservableListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp"/>
 
+    <include layout="@layout/gradient_header"/>
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/AppTheme"
+        app:theme="@style/Toolbar"/>
 </FrameLayout>

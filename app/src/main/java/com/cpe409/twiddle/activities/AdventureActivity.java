@@ -4,10 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +22,11 @@ import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
 import com.cpe409.twiddle.views.ExpandableTextView;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
+import com.google.android.gms.internal.im;
+import com.nineoldandroids.view.ViewHelper;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -31,8 +38,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdventureActivity extends ActionBarActivity {
-
+public class AdventureActivity extends ActionBarActivity implements ObservableScrollViewCallbacks {
 
   public static final String TITLE = "adventure_title";
   public static final String OBJ_ID = "object_id";
@@ -50,20 +56,25 @@ public class AdventureActivity extends ActionBarActivity {
   private boolean isLiked;
   private int likeCount;
 
-  private ObservableListView listView;
   private CommentsListAdapter commentsAdapter;
   private ArrayList<Comment> commentList;
   private ImageButton likeButton;
-
   private TextView socialCounters;
+
+  private ObservableListView listView;
+  private int imageHeight;
+  private ImageView adventureImage;
+  private View toolbarView;
+
+  private View listBackground;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_adventure);
+    setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    View header = getLayoutInflater().inflate(R.layout.view_activity_descr, null);
-
 
     title = getIntent().getExtras().getString(TITLE);
     objId = getIntent().getExtras().getString(OBJ_ID);
@@ -73,12 +84,39 @@ public class AdventureActivity extends ActionBarActivity {
     imgData = getIntent().getExtras().getByteArray(IMAGE_DATA);
     imgUrl = getIntent().getExtras().getString(IMAGE_URL);
 
+    View header = getLayoutInflater().inflate(R.layout.view_activity_descr, null);
     ExpandableTextView descriptView = (ExpandableTextView) header.findViewById(R.id.adventure_description);
     socialCounters = (TextView) header.findViewById(R.id.text_social_counters);
-    ImageView adventureImage = (ImageView) header.findViewById(R.id.adventure_image);
-    listView = (ObservableListView) findViewById(R.id.list);
+    adventureImage = (ImageView) findViewById(R.id.adventure_image);
+    likeButton = (ImageButton) header.findViewById(R.id.btn_like);
+    listBackground = (View) findViewById(R.id.list_background);
 
+    listView = (ObservableListView) findViewById(R.id.list);
+    toolbarView = findViewById(R.id.toolbar);
+    toolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(0, getResources().getColor(R.color.primary)));
+    imageHeight = getResources().getDimensionPixelSize(R.dimen.activity_adventure_image_height);
+    listView.setScrollViewCallbacks(this);
+
+    View paddingView = new View(this);
+    AbsListView.LayoutParams lp = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+        imageHeight);
+    paddingView.setLayoutParams(lp);
+
+    listView.addHeaderView(paddingView);
     listView.addHeaderView(header);
+
+    listBackground = findViewById(R.id.list_background);
+    final View contentView = getWindow().getDecorView().findViewById(android.R.id.content);
+    contentView.post(new Runnable() {
+      @Override
+      public void run() {
+        // mListBackgroundView's should fill its parent vertically
+        // but the height of the content view is 0 on 'onCreate'.
+        // So we should get it with post().
+        listBackground.getLayoutParams().height = contentView.getHeight();
+      }
+    });
+
     commentList = new ArrayList<Comment>();
     commentsAdapter = new CommentsListAdapter(this, commentList);
     listView.setAdapter(commentsAdapter);
@@ -86,7 +124,7 @@ public class AdventureActivity extends ActionBarActivity {
 
     setTitle(title);
     descriptView.setText(description);
-    socialCounters.setText(likeCount + " likes, " + 0 + " comments");
+    socialCounters.setText(likeCount + " likes");
 
 
     if (imgData != null) {
@@ -98,8 +136,7 @@ public class AdventureActivity extends ActionBarActivity {
       adventureImage.setImageResource(R.drawable.bg_nav_drawer);
     }
 
-    likeButton = (ImageButton) findViewById(R.id.btn_like);
-    likeButton.setImageResource(isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_white);
+    likeButton.setImageResource(isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
 
     // TODO: Update the FeedListAdapter's feedList's like data upon changing it here
     likeButton.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +152,7 @@ public class AdventureActivity extends ActionBarActivity {
           unlikeFeed();
           isLiked = false;
           likeCount--;
-          likeButton.setImageResource(R.drawable.ic_heart_outline_white);
+          likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
         } // Unlike the feed
         else {
           likeFeed();
@@ -123,7 +160,7 @@ public class AdventureActivity extends ActionBarActivity {
           likeCount++;
           likeButton.setImageResource(R.drawable.ic_heart_red);
         }
-        socialCounters.setText(likeCount + " likes, " + 0 + " comments");
+        socialCounters.setText(likeCount + " likes");
       }
     });
   }
@@ -140,6 +177,9 @@ public class AdventureActivity extends ActionBarActivity {
           ParseObject parseUser = obj.getParseObject("author");
           Comment comment = Comment.ParseToFeed(obj, FacebookUser.ParseToFacebookUser(parseUser));
           commentList.add(comment);
+          for(int i = 0 ; i < 100; i++) {
+            commentList.add(comment);
+          }
         }
         commentsAdapter.notifyDataSetChanged();
       }
@@ -203,5 +243,24 @@ public class AdventureActivity extends ActionBarActivity {
         parseObject.saveInBackground();
       }
     });
+  }
+
+  @Override
+  public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    int baseColor = getResources().getColor(R.color.primary);
+    float alpha = 1 - (float) Math.max(0, imageHeight - scrollY) / imageHeight;
+    toolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
+    ViewHelper.setTranslationY(adventureImage, -scrollY / 2);
+
+    // Translate list background
+    ViewHelper.setTranslationY(listBackground, Math.max(0, -scrollY + imageHeight));
+  }
+
+  @Override
+  public void onDownMotionEvent() {
+  }
+
+  @Override
+  public void onUpOrCancelMotionEvent(ScrollState scrollState) {
   }
 }

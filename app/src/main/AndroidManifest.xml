@@ -85,7 +85,8 @@
         </activity>
         <activity
             android:name=".activities.AdventureActivity"
-            android:label="@string/title_activity_adventure" >
+            android:label="@string/title_activity_adventure"
+            android:theme="@style/AppTheme.Toolbar">
         </activity>
     </application>
 
