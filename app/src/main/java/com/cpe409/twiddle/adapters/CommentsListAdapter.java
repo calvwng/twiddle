@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.model.Comment;
 import com.cpe409.twiddle.model.FacebookUser;
-import com.cpe409.twiddle.shared.CircleTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -59,9 +58,7 @@ public class CommentsListAdapter extends BaseAdapter {
 
     Comment comment = mComments.get(position);
     Picasso.with(context).load(FacebookUser.fbIdtoPhotoUrl(comment.getAuthor().getUserId()))
-        .centerCrop().placeholder(R.drawable.ic_action_account_circle)
-        .resize(R.dimen.comment_avatar_size, R.dimen.comment_avatar_size).transform(new CircleTransformation()).
-        into(holder.profileIcon);
+        .into(holder.profileIcon);
     holder.text.setText(comment.getText());
     return view;
   }
