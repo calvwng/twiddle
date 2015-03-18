@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.views.ExpandableTextView;
+import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;

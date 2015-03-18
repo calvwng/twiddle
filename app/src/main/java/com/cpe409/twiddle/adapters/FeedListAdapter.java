@@ -131,7 +131,7 @@ public class FeedListAdapter extends BaseAdapter {
     holder.feedPicture.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Feed feed = (Feed)v.getTag();
+        Feed feed = (Feed) v.getTag();
         Intent i = new Intent(context, AdventureActivity.class);
         i.putExtra(AdventureActivity.TITLE, feed.getTitle());
         i.putExtra(AdventureActivity.DESCRIPTION, feed.getDescription());
@@ -152,11 +152,11 @@ public class FeedListAdapter extends BaseAdapter {
     if (feed.getImageData() != null && feed.getImageData().length != 0) {
       Bitmap bitmap = BitmapFactory.decodeByteArray(feed.getImageData(), 0, feed.getImageData().length);
       holder.feedPicture.setImageBitmap(bitmap);
-    } else {
+    } else if (feed.getImgUrl() != null) {
       String imgUrl = feed.getImgUrl();
-      if (imgUrl != null) {
-        Picasso.with(context).load(imgUrl).into(holder.feedPicture);
-      }
+      Picasso.with(context).load(imgUrl).into(holder.feedPicture);
+    } else {
+      holder.feedPicture.setImageResource(R.drawable.bg_nav_drawer);
     }
 
 
