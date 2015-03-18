@@ -124,7 +124,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
 
     setTitle(title);
     descriptView.setText(description);
-    socialCounters.setText(likeCount + " likes, " + 0 + " comments");
+    socialCounters.setText(likeCount + " likes");
 
 
     if (imgData != null) {
@@ -136,7 +136,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
       adventureImage.setImageResource(R.drawable.bg_nav_drawer);
     }
 
-    likeButton.setImageResource(isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_white);
+    likeButton.setImageResource(isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
 
     // TODO: Update the FeedListAdapter's feedList's like data upon changing it here
     likeButton.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +152,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
           unlikeFeed();
           isLiked = false;
           likeCount--;
-          likeButton.setImageResource(R.drawable.ic_heart_outline_white);
+          likeButton.setImageResource(R.drawable.ic_heart_outline_grey);
         } // Unlike the feed
         else {
           likeFeed();
@@ -160,7 +160,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
           likeCount++;
           likeButton.setImageResource(R.drawable.ic_heart_red);
         }
-        socialCounters.setText(likeCount + " likes, " + 0 + " comments");
+        socialCounters.setText(likeCount + " likes");
       }
     });
   }
