@@ -115,6 +115,10 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
     searchQuery = args.getString(SEARCH_QUERY_ARG, "");
     final AdventureLocation peekLocation = (AdventureLocation) args.getSerializable(LOCATION_ARG);
 
+    if (!searchQuery.isEmpty()) {
+      activity.setTitle("\""+searchQuery+"\"");
+    }
+
     feedList = new ArrayList<>();
     feedLikes = new HashSet<>();
     feedFavorites = new HashSet<>();
@@ -178,7 +182,6 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
       location.setLatitude(peekLocation.latitude);
       location.setLongitude(peekLocation.longitude);
       activity.setTitle(peekLocation.city);
-
     } else {
       // If no peek location was provided, get the current one
       location = LocationHelper.getInstance().getLocation(context);
