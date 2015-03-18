@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.model.Comment;
+import com.cpe409.twiddle.model.FacebookUser;
+import com.cpe409.twiddle.shared.CircleTransformation;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -17,11 +20,11 @@ import java.util.List;
  * Created by Calvin on 3/16/2015.
  */
 public class CommentsListAdapter extends BaseAdapter {
-  private LayoutInflater mInflater;
+  private Context context;
   private List<Comment> mComments;
 
   public CommentsListAdapter(Context context, List<Comment> comments) {
-    mInflater = LayoutInflater.from(context);
+    this.context = context;
     mComments = comments;
   }
 
@@ -44,23 +47,22 @@ public class CommentsListAdapter extends BaseAdapter {
   public View getView(int position, View convertView, ViewGroup parent) {
     View view = convertView;
     final ViewHolder holder;
-    if(convertView == null) {
-      view = mInflater.inflate(R.layout.comment_row_layout, parent, false);
+    if (convertView == null) {
+      view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
       holder = new ViewHolder();
-      holder.profileIcon = (ImageView)view.findViewById(R.id.profile_icon);
-      holder.name = (TextView)view.findViewById(R.id.comment_author);
-      holder.text = (TextView)view.findViewById(R.id.comment_text);
+      holder.profileIcon = (ImageView) view.findViewById(R.id.profile_icon);
+      holder.text = (TextView) view.findViewById(R.id.comment_text);
       view.setTag(holder);
-    }
-    else {
-      holder = (ViewHolder)view.getTag();
+    } else {
+      holder = (ViewHolder) view.getTag();
     }
 
     Comment comment = mComments.get(position);
-//    holder.profileIcon.setImageBitmap(comment.getProfileIconBitmap()); // Use Picasso instead
-    holder.name.setText(comment.getAuthor().getName());
+    Picasso.with(context).load(FacebookUser.fbIdtoPhotoUrl(comment.getAuthor().getUserId()))
+        .centerCrop().placeholder(R.drawable.ic_action_account_circle)
+        .resize(R.dimen.comment_avatar_size, R.dimen.comment_avatar_size).transform(new CircleTransformation()).
+        into(holder.profileIcon);
     holder.text.setText(comment.getText());
-
     return view;
   }
 

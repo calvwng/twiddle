@@ -30,19 +30,7 @@ public class CommentListFragment extends ListFragment {
     ParseQuery commentQuery = new ParseQuery("Comment");
     commentQuery.whereEqualTo("adventureId", getActivity().getIntent().getExtras().getString(AdventureActivity.OBJ_ID));
     commentQuery.include("author"); // Include/fetch "author" pointer data with each result
-//    commentQuery.findInBackground(new FindCallback<ParseObject>() {
-//      @Override
-//      public void done(List<ParseObject> parseObjects, ParseException e) {
-//        for (ParseObject obj : parseObjects) {
-//          ParseObject parseUser = obj.getParseObject("author");
-//          Comment comment = Comment.ParseToFeed(obj, FacebookUser.ParseToFacebookUser(parseUser));
-//          commentList.add(comment);
-//        }
-//
-//        CommentsListAdapter commentsAdapter = new CommentsListAdapter(getActivity(), commentList);
-//        setListAdapter(commentsAdapter);
-//      }
-//    });
+
 //
     try {
       List<ParseObject> parseComments = commentQuery.find();
@@ -58,5 +46,19 @@ public class CommentListFragment extends ListFragment {
 
     CommentsListAdapter commentsAdapter = new CommentsListAdapter(getActivity(), commentList);
     setListAdapter(commentsAdapter);
+
+    //    commentQuery.findInBackground(new FindCallback<ParseObject>() {
+//      @Override
+//      public void done(List<ParseObject> parseObjects, ParseException e) {
+//        for (ParseObject obj : parseObjects) {
+//          ParseObject parseUser = obj.getParseObject("author");
+//          Comment comment = Comment.ParseToFeed(obj, FacebookUser.ParseToFacebookUser(parseUser));
+//          commentList.add(comment);
+//        }
+//
+//        CommentsListAdapter commentsAdapter = new CommentsListAdapter(getActivity(), commentList);
+//        setListAdapter(commentsAdapter);
+//      }
+//    });
   }
 }
