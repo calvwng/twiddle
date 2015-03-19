@@ -88,7 +88,7 @@ public class MainActivity extends MaterialNavigationDrawer {
     MaterialSection favoritesSection = this.newSection("Favorites", new FavoritesFragment().newInstance()); // TODO: set drawable & fragment
     MaterialSection profileSection = this.newSection("My Profile",
         new UserProfileFragment().newInstance(CurrentUser.getInstance().getUserId())); // TODO: set drawable & fragment
-    MaterialSection settingsSection = this.newSection("Settings", new Fragment()); // TODO: set drawable & fragment
+//    MaterialSection settingsSection = this.newSection("Settings", new Fragment()); // TODO: set drawable & fragment
     MaterialSection logoutSection = this.newSection("Logout", R.drawable.ic_action_exit_to_app, new Fragment()); // TODO: set drawable & fragment
     logoutSection.setOnClickListener(new MaterialSectionListener() {
 
@@ -110,7 +110,7 @@ public class MainActivity extends MaterialNavigationDrawer {
       this.addSection(profileSection);
     }
 
-    this.addSection(settingsSection);
+//    this.addSection(settingsSection);
     this.addAccount(account);
 
     if (CurrentUser.getInstance().isLoggedIn()) {
