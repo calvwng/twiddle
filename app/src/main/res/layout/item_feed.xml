@@ -28,32 +28,40 @@
                 android:orientation="horizontal"
                 >
 
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/feedUserLayout"
-                    android:orientation="horizontal"
-                    android:measureWithLargestChild="false"
-                    android:layout_alignParentStart="true">
+                    android:clickable="true"
+                    android:background="@drawable/btn_feed_action"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true">
 
-                    <com.cpe409.twiddle.views.RoundImageView
-                        android:id="@+id/feedUserImage"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_gravity="center"
-                        android:scaleType="center"/>
-
-                    <TextView
-                        android:id="@+id/feedUserName"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:paddingLeft="1dp"
-                        android:text="Michael"
-                        android:textColor="@color/text_secondary"
-                        android:gravity="center"/>
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:measureWithLargestChild="false" >
 
-                </LinearLayout>
+                        <com.cpe409.twiddle.views.RoundImageView
+                            android:id="@+id/feedUserImage"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_gravity="center"
+                            android:scaleType="center"/>
+
+                        <TextView
+                            android:id="@+id/feedUserName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="1dp"
+                            android:text="Michael"
+                            android:textColor="@color/text_secondary"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+                </FrameLayout>
 
 
                 <RelativeLayout

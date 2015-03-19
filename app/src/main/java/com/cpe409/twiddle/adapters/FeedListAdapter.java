@@ -15,6 +15,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,7 +92,7 @@ public class FeedListAdapter extends BaseAdapter {
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       view = inflater.inflate(R.layout.item_feed, parent, false);
       holder = new ViewHolder();
-      holder.authorLayout = (LinearLayout) view.findViewById(R.id.feedUserLayout);
+      holder.authorLayout = (FrameLayout) view.findViewById(R.id.feedUserLayout);
       holder.authorImage = (RoundImageView) view.findViewById(R.id.feedUserImage);
       holder.authorName = (TextView) view.findViewById(R.id.feedUserName);
       holder.feedPicture = (ImageView) view.findViewById(R.id.feedPicture);
@@ -360,7 +361,7 @@ public class FeedListAdapter extends BaseAdapter {
     Feed feed;
     RoundImageView authorImage;
     TextView authorName;
-    LinearLayout authorLayout;
+    FrameLayout authorLayout;
     ImageView feedPicture;
     TextView feedTitle;
     TextView feedDistance;
