@@ -139,7 +139,7 @@ public class FeedListAdapter extends BaseAdapter {
         i.putExtra(AdventureActivity.IMAGE_URL, feed.getImgUrl());     // Pass image url in case
         i.putExtra(AdventureActivity.IS_LIKED, feed.getIsLiked());
         i.putExtra(AdventureActivity.LIKE_COUNT, feed.getLikesCount());
-        i.putExtra(AdventureActivity.OBJ_ID, feed.getObjId());         // For querying comments
+        i.putExtra(AdventureActivity.ADVENTURE_ID, feed.getObjId());         // For querying comments
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
       }

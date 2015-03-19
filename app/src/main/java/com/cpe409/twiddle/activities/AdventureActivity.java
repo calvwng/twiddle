@@ -5,11 +5,14 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,15 +20,17 @@ import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
 import com.cpe409.twiddle.adapters.CommentsListAdapter;
+import com.cpe409.twiddle.fragments.FeedFragment;
 import com.cpe409.twiddle.model.Comment;
 import com.cpe409.twiddle.model.CurrentUser;
 import com.cpe409.twiddle.model.FacebookUser;
+import com.cpe409.twiddle.shared.UtilHelper;
 import com.cpe409.twiddle.views.ExpandableTextView;
+import com.cpe409.twiddle.views.SendCommentButton;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
-import com.google.android.gms.internal.im;
 import com.nineoldandroids.view.ViewHelper;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -38,10 +43,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdventureActivity extends ActionBarActivity implements ObservableScrollViewCallbacks {
+public class AdventureActivity extends ActionBarActivity implements ObservableScrollViewCallbacks, SendCommentButton.OnSendClickListener  {
 
   public static final String TITLE = "adventure_title";
-  public static final String OBJ_ID = "object_id";
+  public static final String ADVENTURE_ID = "adventure_id";
   public static final String DESCRIPTION = "description";
   public static final String IMAGE_URL = "image_url";
   public static final String IMAGE_DATA = "image_data";
@@ -49,7 +54,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   public static final String LIKE_COUNT = "like_count";
 
   private String title;
-  private String objId;
+  private String adventureId;
   private String description;
   private String imgUrl;
   private byte[] imgData;
@@ -65,9 +70,12 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   private int imageHeight;
   private ImageView adventureImage;
   private View toolbarView;
+  private EditText commentText;
+  private SendCommentButton sendCommentButton;
 
   private View listBackground;
 
+  private static final String TAG = AdventureActivity.class.getSimpleName();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +85,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     title = getIntent().getExtras().getString(TITLE);
-    objId = getIntent().getExtras().getString(OBJ_ID);
+    adventureId = getIntent().getExtras().getString(ADVENTURE_ID);
     description = getIntent().getExtras().getString(DESCRIPTION);
     isLiked = getIntent().getExtras().getBoolean(IS_LIKED);
     likeCount = getIntent().getExtras().getInt(LIKE_COUNT);
@@ -90,6 +98,10 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
     adventureImage = (ImageView) findViewById(R.id.adventure_image);
     likeButton = (ImageButton) header.findViewById(R.id.btn_like);
     listBackground = (View) findViewById(R.id.list_background);
+    commentText = (EditText) findViewById(R.id.comment_edit_text);
+    sendCommentButton = (SendCommentButton) findViewById(R.id.btn_send_comment);
+
+    sendCommentButton.setOnSendClickListener(this);
 
     listView = (ObservableListView) findViewById(R.id.list);
     toolbarView = findViewById(R.id.toolbar);
@@ -166,20 +178,27 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   }
 
   private void queryData() {
+    if (!UtilHelper.isNetworkOnline(this)) {
+      UtilHelper.throwToastError(this, "No network connection.");
+      return;
+    }
+
+    Log.d(TAG, "Querying comments");
     commentList.clear();
     ParseQuery commentQuery = new ParseQuery("Comment");
-    commentQuery.whereEqualTo("adventureId", objId);
+    commentQuery.whereEqualTo("adventureId", adventureId);
     commentQuery.include("author"); // Include/fetch "author" pointer data with each result
     commentQuery.findInBackground(new FindCallback<ParseObject>() {
       @Override
       public void done(List<ParseObject> parseObjects, ParseException e) {
+        if (e != null) {
+          UtilHelper.throwToastError(getBaseContext(), e.toString());
+          return;
+        }
         for (ParseObject obj : parseObjects) {
           ParseObject parseUser = obj.getParseObject("author");
           Comment comment = Comment.ParseToFeed(obj, FacebookUser.ParseToFacebookUser(parseUser));
           commentList.add(comment);
-          for(int i = 0 ; i < 100; i++) {
-            commentList.add(comment);
-          }
         }
         commentsAdapter.notifyDataSetChanged();
       }
@@ -209,11 +228,11 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   private void likeFeed() {
     ParseObject like = new ParseObject("Like");
     like.put("user", ParseUser.getCurrentUser());
-    like.put("adventureId", objId);
+    like.put("adventureId", adventureId);
     like.saveInBackground();
 
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Adventure");
-    query.getInBackground(objId, new GetCallback<ParseObject>() {
+    query.getInBackground(adventureId, new GetCallback<ParseObject>() {
       @Override
       public void done(ParseObject parseObject, ParseException e) {
         parseObject.put("likes", parseObject.getInt("likes") + 1);
@@ -225,7 +244,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   private void unlikeFeed() {
     ParseQuery<ParseObject> query = ParseQuery.getQuery("Like");
     query.whereEqualTo("user", ParseUser.getCurrentUser());
-    query.whereEqualTo("adventureId", objId);
+    query.whereEqualTo("adventureId", adventureId);
     query.findInBackground(new FindCallback<ParseObject>() {
       @Override
       public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -236,7 +255,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
     });
 
     ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Adventure");
-    query2.getInBackground(objId, new GetCallback<ParseObject>() {
+    query2.getInBackground(adventureId, new GetCallback<ParseObject>() {
       @Override
       public void done(ParseObject parseObject, ParseException e) {
         parseObject.put("likes", parseObject.getInt("likes") - 1);
@@ -262,5 +281,50 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
 
   @Override
   public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+  }
+
+  @Override
+  public void onSendClickListener(View v) {
+    if (validateComment()) {
+      String text = commentText.getText().toString();
+      Comment comment = new Comment(CurrentUser.getInstance(), text);
+      commentList.add(comment);
+      commentsAdapter.notifyDataSetChanged();
+      saveComment(text);
+      scrollMyListViewToBottom();
+      commentText.setText(null);
+      sendCommentButton.setCurrentState(SendCommentButton.STATE_DONE);
+    }
+  }
+
+  private void saveComment(String text) {
+    ParseObject comment = new ParseObject("Comment");
+    comment.put("author", ParseUser.getCurrentUser());
+    comment.put("adventureId", adventureId);
+    comment.put("text", text);
+    comment.saveEventually();
+  }
+
+  private boolean validateComment() {
+    if (!CurrentUser.getInstance().isLoggedIn()) {
+      Toast.makeText(getBaseContext(), "Please log in.", Toast.LENGTH_SHORT).show();
+      return false;
+    }
+    if (TextUtils.isEmpty(commentText.getText())) {
+      sendCommentButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
+      return false;
+    }
+
+    return true;
+  }
+
+  private void scrollMyListViewToBottom() {
+    listView.post(new Runnable() {
+      @Override
+      public void run() {
+        // Select the last row so it will scroll into view...
+        listView.setSelection(commentsAdapter.getCount() - 1);
+      }
+    });
   }
 }

@@ -8,14 +8,12 @@ import com.parse.ParseObject;
 public class Comment {
   private FacebookUser author;
   private String text;
-  private String objId;
 
   public Comment() {
 
   }
 
-  public Comment(String objId, FacebookUser author, String text) {
-    this.objId = objId;
+  public Comment(FacebookUser author, String text) {
     this.author = author;
     this.text = text;
   }
@@ -33,10 +31,6 @@ public class Comment {
 
   public String getText() {
     return this.text;
-  }
-
-  public String getObjId() {
-    return objId;
   }
 
 }
