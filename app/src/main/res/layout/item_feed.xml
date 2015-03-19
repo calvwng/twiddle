@@ -20,17 +20,21 @@
             android:orientation="vertical"
             android:background="@color/white">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:layout_margin="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                >
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/feedUserLayout"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:measureWithLargestChild="false"
+                    android:layout_alignParentStart="true">
 
                     <com.cpe409.twiddle.views.RoundImageView
                         android:id="@+id/feedUserImage"
@@ -53,15 +57,21 @@
 
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:id="@+id/feedDistanceLayout"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_alignParentEnd="true"
+                    >
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/ic_maps_place_black"
-                        android:layout_toLeftOf="@+id/feedDistance"
-                        android:padding="-12dp"/>
+                        android:layout_alignParentEnd="false"
+                        android:layout_alignParentStart="false"
+                        android:paddingLeft="-12dp"
+                        android:paddingRight="-12dp"/>
 
                     <TextView
                         android:id="@+id/feedDistance"
@@ -75,7 +85,7 @@
                 </RelativeLayout>
 
 
-            </LinearLayout>
+            </RelativeLayout>
 
 
             <com.cpe409.twiddle.views.SquaredFrameLayout
