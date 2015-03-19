@@ -140,10 +140,12 @@ public class FeedListAdapter extends BaseAdapter {
         i.putExtra(AdventureActivity.IS_LIKED, feed.getIsLiked());
         i.putExtra(AdventureActivity.LIKE_COUNT, feed.getLikesCount());
         i.putExtra(AdventureActivity.ADVENTURE_ID, feed.getObjId());         // For querying comments
+        i.putExtra(AdventureActivity.FROM_COMMENTS_BUTTON, false);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
       }
     });
+
 
     holder.authorName.setText(feed.getAuthor().getName());
     holder.feedTitle.setText(feed.getTitle());

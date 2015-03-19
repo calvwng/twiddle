@@ -1,5 +1,6 @@
 package com.cpe409.twiddle.activities;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -52,6 +54,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   public static final String IMAGE_DATA = "image_data";
   public static final String IS_LIKED = "is_liked";
   public static final String LIKE_COUNT = "like_count";
+  public static final String FROM_COMMENTS_BUTTON = "from_comments_button";
 
   private String title;
   private String adventureId;
@@ -60,6 +63,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
   private byte[] imgData;
   private boolean isLiked;
   private int likeCount;
+  private boolean fromCommentsButton;
 
   private CommentsListAdapter commentsAdapter;
   private ArrayList<Comment> commentList;
@@ -91,6 +95,7 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
     likeCount = getIntent().getExtras().getInt(LIKE_COUNT);
     imgData = getIntent().getExtras().getByteArray(IMAGE_DATA);
     imgUrl = getIntent().getExtras().getString(IMAGE_URL);
+    fromCommentsButton = getIntent().getExtras().getBoolean(FROM_COMMENTS_BUTTON);
 
     View header = getLayoutInflater().inflate(R.layout.view_activity_descr, null);
     ExpandableTextView descriptView = (ExpandableTextView) header.findViewById(R.id.adventure_description);
@@ -201,6 +206,15 @@ public class AdventureActivity extends ActionBarActivity implements ObservableSc
           commentList.add(comment);
         }
         commentsAdapter.notifyDataSetChanged();
+
+        if (fromCommentsButton) {
+          scrollMyListViewToBottom();
+          commentText.requestFocus();
+          InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+          if (inputMethodManager != null) {
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+          }
+        }
       }
     });
   }

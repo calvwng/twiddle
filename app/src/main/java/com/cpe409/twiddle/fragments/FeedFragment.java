@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.cpe409.twiddle.R;
+import com.cpe409.twiddle.activities.AdventureActivity;
 import com.cpe409.twiddle.activities.CreateActivity;
 import com.cpe409.twiddle.activities.FilteredFeedActivity;
 import com.cpe409.twiddle.activities.LocationActivity;
@@ -463,10 +464,16 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnFeedItem
 
   @Override
   public void onCommentsClick(View v, Feed feed) {
-    if (!CurrentUser.getInstance().isLoggedIn()) {
-      Toast.makeText(context, "Please log in before Commenting.", Toast.LENGTH_SHORT).show();
-      return;
-    }
+    Intent i = new Intent(context, AdventureActivity.class);
+    i.putExtra(AdventureActivity.TITLE, feed.getTitle());
+    i.putExtra(AdventureActivity.DESCRIPTION, feed.getDescription());
+    i.putExtra(AdventureActivity.IMAGE_DATA, feed.getImageData()); // Pass image byte[]
+    i.putExtra(AdventureActivity.IMAGE_URL, feed.getImgUrl());     // Pass image url in case
+    i.putExtra(AdventureActivity.IS_LIKED, feed.getIsLiked());
+    i.putExtra(AdventureActivity.LIKE_COUNT, feed.getLikesCount());
+    i.putExtra(AdventureActivity.ADVENTURE_ID, feed.getObjId());         // For querying comments
+    i.putExtra(AdventureActivity.FROM_COMMENTS_BUTTON, true);
+    startActivity(i);
   }
 
   @Override
