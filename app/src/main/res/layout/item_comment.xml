@@ -27,10 +27,4 @@
             android:text="Lorem ipsum dolor sit amet"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="88dp"
-        android:background="#cccccc"/>
 </FrameLayout>
